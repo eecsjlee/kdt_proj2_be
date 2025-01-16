@@ -1,14 +1,15 @@
 package com.kdt_proj2_be.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Set;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member {
 
     @Id
@@ -17,12 +18,11 @@ public class Member {
 
     @Column(unique = true)
     private String username;
-    private String displayName;
+    private String displayname;
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "member_id"))
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles; // 권한을 Enum으로 저장
+    @Builder.Default
+    private Role role = Role.ROLE_MEMBER;
 
 }

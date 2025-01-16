@@ -6,10 +6,10 @@ import lombok.*;
 @Builder
 public class MemberDTO {
     public String username;
-    public String displayName;
+    public String displayname;
 
     MemberDTO(String a, String b) {
         this.username = a;
-        this.displayName = b;
+        this.displayname = b;
     }
 }

@@ -10,7 +10,6 @@ import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.persistence.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,7 +38,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
         return new User(
                 member.getUsername(), // 사용자명
                 member.getPassword(), // 비밀번호
-                Collections.singletonList(new SimpleGrantedAuthority(member.getRoles().iterator().next().name())) // 권한 첫번째 권한이 들어옴 어드민?
+                Collections.singletonList(new SimpleGrantedAuthority(member.getRole().name())) // 권한 설정
         );
     }
 }

@@ -8,21 +8,27 @@ package com.kdt_proj2_be.service;
 
 import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.persistence.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
+
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // Constructor-based Dependency Injection
-    public MemberService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
+    // 의존성 주입
+//    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
+//        this.memberRepository = memberRepository;
+//        this.passwordEncoder = passwordEncoder;
+//    }
 
-    // 회원 등록
-    public Member createMember(Member member) {
+    // 회원 가입
+    public Member registerMember(Member member) {
         validateDuplicateMember(member); // 중복 회원 검증
         return memberRepository.save(member);
     }
@@ -33,19 +39,18 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("Member not found with ID: " + memberId));
     }
 
-    // 전체 회원 조회
-    public List<Member> getAllMembers() {
-        return memberRepository.findAll();
-    }
-
-    // 회원 수정 픽스미
-    public Member updateMember(Long memberId, Member updatedMember) {
-        Member existingMember = getMemberById(memberId);
-        existingMember.setName(updatedMember.getName());
-        existingMember.setEmail(updatedMember.getEmail());
-        // 기타 필드 업데이트
-        return memberRepository.save(existingMember);
-    }
+    // 회원 정보 수정
+//    public Member updateMember(Member member) {
+//        Member mem = memberRepository.findByUsername(member.getUsername());
+//        if (member.getPassword() != null) {
+//            mem.setPassword(passwordEncoder.encode(member.getPassword()));
+//        }
+//
+//        if (member.getDisplayName() != null) {
+//            mem.getDisplayName(member.getDisplayName());
+//        }
+//        return memberRepository.save(mem);
+//    }
 
     // 회원 삭제
     public void deleteMember(Long memberId) {
@@ -57,8 +62,8 @@ public class MemberService {
 
     // 중복 회원 검증
     private void validateDuplicateMember(Member member) {
-        if (memberRepository.findByEmail(member.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Member with email " + member.getEmail() + " already exists.");
+        if (memberRepository.findByUsername(member.getUsername()).isPresent()) {
+            throw new IllegalArgumentException(member.getUsername() + "는 이미 존재합니다.");
         }
     }
 }
