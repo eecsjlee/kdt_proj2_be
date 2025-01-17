@@ -23,5 +23,16 @@ Spring Boot version '3.4.1'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
 ```
 
+
+## 프로젝트 기간
+2025-01-13 ~ 2025-02-20
+  
+## 팀 구성
+|      담당      |  이름   |             GITHUB              |
+|:------------:|:-----:|:-------------------------------:|
+|  FRONT-END   |  김좌현  |  https://github.com/jwahyunkim  |
+|   BACK-END   |  이준영  |   https://github.com/eecsjlee   |
+|     DATA     |  박래찬  |  https://github.com/chani1352   |
+  
 ## 메모
   
