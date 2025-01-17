@@ -29,7 +29,6 @@ public class MemberService {
 
     // 회원 가입
     public Member registerMember(Member member) {
-//        validateDuplicateMember(member); // 중복 회원 검증
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member); //회원 정보를 DB에 저장
     }
