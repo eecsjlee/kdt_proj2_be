@@ -32,11 +32,11 @@ public class SecurityUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // username으로 Member를 찾고 없으면 예외를 던짐
-        Member member = memberRepository.findByUsername(username)
+        Member member = memberRepository.findByUserId(username)
                 .orElseThrow(() -> new IllegalArgumentException(username + "을 찾을 수 없습니다."));
 
         return new User(
-                member.getUsername(), // 사용자명
+                member.getUserId(), // 사용자명
                 member.getPassword(), // 비밀번호
                 Collections.singletonList(new SimpleGrantedAuthority(member.getRole().name())) // 권한 설정
         );

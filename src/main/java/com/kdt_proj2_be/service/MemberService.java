@@ -29,9 +29,19 @@ public class MemberService {
 
     // 회원 가입
     public Member registerMember(Member member) {
-        validateDuplicateMember(member); // 중복 회원 검증
-        return memberRepository.save(member);
+//        validateDuplicateMember(member); // 중복 회원 검증
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        return memberRepository.save(member); //회원 정보를 DB에 저장
     }
+
+    // 회원 가입시 userId 중복 체크
+    public boolean findMember(String userId) {
+        System.out.println("MemberService findMember"); // 확인용
+        Member findMember = memberRepository.findByUserId(userId).orElse(null);
+        return findMember != null ? true : false;
+    }
+
+
 
     // 회원 조회
     public Member getMemberById(Long memberId) {
@@ -40,30 +50,30 @@ public class MemberService {
     }
 
     // 회원 정보 수정
-//    public Member updateMember(Member member) {
-//        Member mem = memberRepository.findByUsername(member.getUsername());
-//        if (member.getPassword() != null) {
-//            mem.setPassword(passwordEncoder.encode(member.getPassword()));
-//        }
-//
-//        if (member.getDisplayName() != null) {
-//            mem.getDisplayName(member.getDisplayName());
-//        }
-//        return memberRepository.save(mem);
-//    }
-
-    // 회원 삭제
-    public void deleteMember(Long memberId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new RuntimeException("Member not found with ID: " + memberId);
+    public Member updateMember(Member member) {
+        Member mem = memberRepository.findByUserId(member.getUserId()).get();
+        if (member.getPassword() != null) {
+            mem.setPassword(passwordEncoder.encode(member.getPassword()));
         }
-        memberRepository.deleteById(memberId);
+
+        if (member.getName() != null) {
+            mem.setName(member.getName());
+        }
+
+        return memberRepository.save(mem);
     }
+
+//    // 회원 삭제 실제론 enabled를 0으로 만듬
+//    public void deleteMember(Long memberId) {
+//        Member delmem = memberRepository.findByUserId(member.getUserId()).get();
+//        delmem = false
+//        memberRepository.save(mem);
+//    }
 
     // 중복 회원 검증
     private void validateDuplicateMember(Member member) {
-        if (memberRepository.findByUsername(member.getUsername()).isPresent()) {
-            throw new IllegalArgumentException(member.getUsername() + "는 이미 존재합니다.");
+        if (memberRepository.findByUserId(member.getUserId()).isPresent()) {
+            throw new IllegalArgumentException(member.getUserId() + "는 이미 존재합니다.");
         }
     }
 }

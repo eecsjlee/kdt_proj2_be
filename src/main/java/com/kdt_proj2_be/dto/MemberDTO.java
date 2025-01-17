@@ -5,11 +5,11 @@ import lombok.*;
 @Getter @Setter @ToString
 @Builder
 public class MemberDTO {
-    public String username;
-    public String displayname;
+    public String nameId;
+    public String name;
 
     MemberDTO(String a, String b) {
-        this.username = a;
-        this.displayname = b;
+        this.nameId = a;
+        this.name = b;
     }
 }
