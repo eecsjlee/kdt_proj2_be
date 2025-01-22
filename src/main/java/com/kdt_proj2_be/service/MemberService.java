@@ -9,10 +9,11 @@ package com.kdt_proj2_be.service;
 import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.persistence.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +21,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
-    // 의존성 주입
-//    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
-//        this.memberRepository = memberRepository;
-//        this.passwordEncoder = passwordEncoder;
-//    }
 
     // 회원 가입
     public Member registerMember(Member member) {
@@ -35,22 +30,30 @@ public class MemberService {
 
     // 회원 가입시 userId 중복 체크
     public boolean findMember(String userId) {
-        System.out.println("MemberService findMember"); // 확인용
         Member findMember = memberRepository.findByUserId(userId).orElse(null);
         return findMember != null ? true : false;
     }
 
+//    public boolean checkUsernameExists(String username) {
+//        return memberRepository.existsByUsername(username); // 중복 여부 반환
+//    }
 
 
-    // 회원 조회
-    public Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found with ID: " + memberId));
+    // 로그인 후 회원 정보 전달
+    public ResponseEntity<Member> getUserData(Authentication authentication) {
+        String userId = authentication.getName();
+        Member member = memberRepository.findByUserId(userId).orElse(null);
+        if (member != null) {
+            return ResponseEntity.ok(member);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     // 회원 정보 수정
     public Member updateMember(Member member) {
-        Member mem = memberRepository.findByUserId(member.getUserId()).get();
+        Member mem = memberRepository.findByUserId(member.getUserId()).orElseThrow(() -> new RuntimeException("Member not found"));
         if (member.getPassword() != null) {
             mem.setPassword(passwordEncoder.encode(member.getPassword()));
         }
@@ -62,6 +65,20 @@ public class MemberService {
         return memberRepository.save(mem);
     }
 
+    // 회원 비활성화 enabled를 false로 설정
+    public void disableMember(String userId) {
+        // userId를 기반으로 회원 정보 조회
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException(userId + "를 찾을 수 없습니다."));
+
+        // 회원 비활성화 처리
+        member.setEnabled(false);
+
+        // 변경 사항 저장
+        memberRepository.save(member);
+    }
+
+
 //    // 회원 삭제 실제론 enabled를 0으로 만듬
 //    public void deleteMember(Long memberId) {
 //        Member delmem = memberRepository.findByUserId(member.getUserId()).get();
@@ -69,10 +86,11 @@ public class MemberService {
 //        memberRepository.save(mem);
 //    }
 
-    // 중복 회원 검증
-    private void validateDuplicateMember(Member member) {
-        if (memberRepository.findByUserId(member.getUserId()).isPresent()) {
-            throw new IllegalArgumentException(member.getUserId() + "는 이미 존재합니다.");
-        }
-    }
+//    // 중복 회원 검증
+//    private void validateDuplicateMember(Member member) {
+//        if (memberRepository.findByUserId(member.getUserId()).isPresent()) {
+//            throw new IllegalArgumentException(member.getUserId() + "는 이미 존재합니다.");
+//        }
+//    }
+
 }

@@ -30,10 +30,10 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // username으로 Member를 찾고 없으면 예외를 던짐
-        Member member = memberRepository.findByUserId(username)
-                .orElseThrow(() -> new IllegalArgumentException(username + "을 찾을 수 없습니다."));
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        // userId으로 Member를 찾고 없으면 예외를 던짐
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException(userId + "을 찾을 수 없습니다."));
 
         return new User(
                 member.getUserId(), // 사용자명

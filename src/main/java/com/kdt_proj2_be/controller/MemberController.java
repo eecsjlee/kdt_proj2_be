@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -40,6 +42,7 @@ public class MemberController {
 //        memberRepository.save(member);
 //        return "redirect:/list"; //회원 등록 후 list로 페이지 리다이렉트함
 //    }
+
     // 회원 가입 데이터를 받아서 MemberService로 보냄
     @PostMapping
     public Member registerMember(@RequestBody Member member) {
@@ -52,18 +55,40 @@ public class MemberController {
         return memberService.registerMember(member);
     }
 
-    @GetMapping("/checkDuple")
+
+    @GetMapping("/exists")
     public boolean findMember(String userId) {
         System.out.println("MemberController findMember"); //확인용
         return memberService.findMember(userId);
     }
 
-    // 스프링부트3 교재 내용 p259
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-        return "redirect:/login";
+//    // 스프링부트3 교재 내용 p259
+//    @GetMapping("/logout")
+//    public String logout(HttpServletRequest request, HttpServletResponse response) {
+//        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+//        return "redirect:/login";
+//    }
+
+    // 로그인시 회원 정보 열람
+    @GetMapping
+    public ResponseEntity<Member> getUserData(Authentication authentication) {
+        return memberService.getUserData(authentication);
     }
+
+    // 회원정보 수정
+    @PutMapping
+    public Member updateMember(@RequestBody Member member) {
+        return memberService.updateMember(member);
+    }
+
+    // 회원 비활성화(탈퇴)
+    @PatchMapping("/{userId}/disable")
+    public ResponseEntity<String> disableMember(@PathVariable String userId) {
+        memberService.disableMember(userId);
+        return ResponseEntity.ok("Member has been disabled successfully.");
+    }
+
+
 
 
 //    @GetMapping("/mypage")
