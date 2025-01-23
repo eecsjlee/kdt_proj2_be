@@ -44,16 +44,19 @@ public class MemberController {
 //    }
 
     // 회원 가입 데이터를 받아서 MemberService로 보냄
+
+//    @PostMapping
+//    public ResponseEntity<Member> registerMember(@RequestBody Member member) {
+//        return ResponseEntity.ok(memberService.registerMember(member));
+//    }
+
+
     @PostMapping
     public Member registerMember(@RequestBody Member member) {
-//        Member member = new Member();
-//        member.setUserId(userId);
-//        var hash = passwordEncoder.encode(password);
-//        member.setPassword(hash);
-//        member.setName(name);
-//        member.setRole(Role.ROLE_MEMBER);
         return memberService.registerMember(member);
     }
+
+
 
 
     @GetMapping("/exists")
@@ -87,15 +90,4 @@ public class MemberController {
         memberService.disableMember(userId);
         return ResponseEntity.ok("Member has been disabled successfully.");
     }
-
-
-
-
-//    @GetMapping("/mypage")
-//    public String myPage(Authentication auth) {
-//        CustomUser result = (CustomUser) auth.getPrincipal();
-//        System.out.println(result.displayName);
-//        return "mypage.html";
-//    }
-
 }

@@ -24,6 +24,10 @@ public class MemberService {
 
     // 회원 가입
     public Member registerMember(Member member) {
+        if (member.getBrn() == null || member.getBrn().isEmpty()) {
+            throw new IllegalArgumentException("BRN must not be null or empty.");
+        }
+
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member); //회원 정보를 DB에 저장
     }
@@ -77,20 +81,5 @@ public class MemberService {
         // 변경 사항 저장
         memberRepository.save(member);
     }
-
-
-//    // 회원 삭제 실제론 enabled를 0으로 만듬
-//    public void deleteMember(Long memberId) {
-//        Member delmem = memberRepository.findByUserId(member.getUserId()).get();
-//        delmem = false
-//        memberRepository.save(mem);
-//    }
-
-//    // 중복 회원 검증
-//    private void validateDuplicateMember(Member member) {
-//        if (memberRepository.findByUserId(member.getUserId()).isPresent()) {
-//            throw new IllegalArgumentException(member.getUserId() + "는 이미 존재합니다.");
-//        }
-//    }
 
 }

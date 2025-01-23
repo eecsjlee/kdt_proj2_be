@@ -1,12 +1,16 @@
 package com.kdt_proj2_be.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -18,9 +22,15 @@ import java.util.Date;
 @Table(name = "member")
 public class Member {
 
+    // 사업자등록번호
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+//  @GeneratedValue(strategy = GenerationType.IDENTITY)
+//  @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "brn", nullable = false)
+    private String brn;
+
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+//    private List<Car> cars = new ArrayList<>();
 
     @Column(name = "user_id", unique = true, nullable = false)
     private String userId;
@@ -28,22 +38,12 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    // 상호명
     @Column(nullable = false)
     private String name;
 
     @Column(name = "email_address", nullable = true)
     private String emailAddress;
-
-    @Column(name = "car_number", nullable = true)
-    private String carNumber;
-
-    //생년월일
-    @Column(nullable = true)
-    private LocalDate birth;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    private Gender gender;
 
     @Column(name = "postal_code", nullable = true)
     private String postalCode;
@@ -55,7 +55,7 @@ public class Member {
     private String detailAddress;
 
     //연락처
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String contact;
 
     @Enumerated(EnumType.STRING)
@@ -67,13 +67,11 @@ public class Member {
 
     //생성 일자
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     //수정 일자
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 }
