@@ -22,12 +22,11 @@ import java.util.List;
 @Table(name = "member")
 public class Member {
 
-    // 사업자등록번호
     @Id
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
 //  @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "brn", nullable = false)
-    private String brn;
+    private String brn; // 사업자 번호
 
 //    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 //    private List<Car> cars = new ArrayList<>();
