@@ -56,9 +56,6 @@ public class MemberController {
         return memberService.registerMember(member);
     }
 
-
-
-
     @GetMapping("/exists")
     public boolean findMember(String userId) {
         System.out.println("MemberController findMember"); //확인용
