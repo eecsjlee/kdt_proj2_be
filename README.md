@@ -2,9 +2,9 @@
   
 ## 개발환경
   
-IntelliJ IDEA 
-Spring Boot version '3.4.1'
-
+IntelliJ IDEA  
+Spring Boot version '3.4.1'  
+  
 ## dependencies
   
 ```declarative
@@ -22,10 +22,10 @@ Spring Boot version '3.4.1'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
 ```
-
-
+  
+  
 ## 프로젝트 기간
-2025-01-13 ~ 2025-02-20
+2025-01-13 ~ 2025-02-20  
   
 ## 팀 구성
 |      담당      |  이름   |             GITHUB              |
