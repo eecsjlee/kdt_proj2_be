@@ -5,6 +5,9 @@ import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.persistence.CarRepository;
 import com.kdt_proj2_be.persistence.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,5 +39,18 @@ public class CarService {
 //        Member findCar = carRepository.findByCarNumber(carNumber).orElse(null);
 //        return findCar != null ? true : false;
 //    }
+
+    // 로그인 후 회원 정보 전달
+    public ResponseEntity<Car> getCarData(Authentication authentication) {
+        String carNumber = authentication.getName(); // getName()이 맞는지?
+        Car car = carRepository.findByCarNumber(carNumber).orElse(null);
+        if (car != null) {
+            return ResponseEntity.ok(car);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 
 }

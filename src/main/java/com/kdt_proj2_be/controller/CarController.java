@@ -6,10 +6,9 @@ import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.service.CarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -24,4 +23,10 @@ public class CarController {
     public Car registerCar(@RequestBody Car car) {
         return carService.registerCar(car);
     }
+
+    @GetMapping
+    public ResponseEntity<Car> getUserData(Authentication authentication) {
+        return carService.getCarData(authentication);
+    }
+
 }

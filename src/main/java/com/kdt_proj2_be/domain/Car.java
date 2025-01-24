@@ -19,7 +19,12 @@ public class Car {
     private String carNumber;
 
     @ManyToOne
-    @JoinColumn(name ="brn", nullable = false) //외래 키 매핑
+    @JoinColumn(name = "brn", nullable = false) //외래 키 매핑
     private Member member;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    @Column(name = "request_status", nullable = false)
+    private RequestStatus requestStatus = RequestStatus.PENDING; // 승인 상태 (enum 타입)
 
 }
