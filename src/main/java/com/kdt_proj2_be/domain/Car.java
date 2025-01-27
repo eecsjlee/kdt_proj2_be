@@ -27,4 +27,6 @@ public class Car {
     @Column(name = "request_status", nullable = false)
     private RequestStatus requestStatus = RequestStatus.PENDING; // 승인 상태 (enum 타입)
 
+    @Column(name = "image")
+    private String image; // 이미지 파일 URL
 }
