@@ -9,8 +9,8 @@ import java.util.Date;
 public class JWTUtil {
     private static final long ACCESS_TOKEN_MSEC = 100 * (60 * 1000); //100분
     private static final String JWT_KEY = "com.pnu.jwt"; //인코딩을 위한 secret key
-    private static final String ClaimName = "username";		//토큰에 담을 정보의 key
-    private static final String prefix = "Bearer ";			//JWT 토큰 헤더 문자열
+    private static final String ClaimName = "username";	//토큰에 담을 정보의 key
+    private static final String prefix = "Bearer ";	//JWT 토큰 헤더 문자열
 
     private static String getJWTSource(String token) {
         System.out.println("JWTUtil getJWTSource");
