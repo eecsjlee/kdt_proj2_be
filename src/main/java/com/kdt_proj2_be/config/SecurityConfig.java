@@ -26,8 +26,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf((csrf) -> csrf.disable());
-        http.authorizeHttpRequests((authorize) ->
-                authorize.requestMatchers("/**").permitAll()
+        http.authorizeHttpRequests((authorize) -> authorize
+                .requestMatchers("/**").permitAll()
+                .requestMatchers("/swagger-ui.html","v3/api-docs/","/swagger-ui/").permitAll()
         );
 
         //CORS 해결 코드
