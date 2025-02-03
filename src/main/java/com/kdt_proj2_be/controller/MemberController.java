@@ -4,6 +4,8 @@ import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.domain.Role;
 import com.kdt_proj2_be.persistence.MemberRepository;
 import com.kdt_proj2_be.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "member API", description = "멤버 정보를 담당하는 API")
 @RequestMapping("/member")
 public class MemberController {
 
@@ -50,8 +53,11 @@ public class MemberController {
 //        return ResponseEntity.ok(memberService.registerMember(member));
 //    }
 
-
     @PostMapping
+    @Operation(
+            summary = "회원 가입",
+            description = "새 회원을 생성합니다."
+    )
     public Member registerMember(@RequestBody Member member) {
         return memberService.registerMember(member);
     }

@@ -26,9 +26,9 @@ public class CarController {
 
     //차량등록
     @PostMapping
-    public Car registerCar(@RequestBody CarDTO carDTO) {
+    public Car registerCar(@RequestBody CarDTO carDTO, String brn) throws IOException {
         log.info("Registering Car with DTO: {}", carDTO); // 확인
-        return carService.registerCar(carDTO);
+        return carService.registerCar(carDTO, brn);
     }
 
     @GetMapping

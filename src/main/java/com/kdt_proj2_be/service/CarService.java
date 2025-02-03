@@ -2,6 +2,7 @@ package com.kdt_proj2_be.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.kdt_proj2_be.domain.Car;
@@ -26,13 +27,13 @@ public class CarService {
     private final MemberRepository memberRepository;
 
     // 차량 등록
-    public Car registerCar(CarDTO carDTO) throws IOException {
+    public Car registerCar(CarDTO carDTO, String brn) throws IOException {
 
         // 이미지 업로드
         String imagePath = imageUpload(carDTO);
 
         // member 조회 FIXME 어디서 잘못 됐는지 모르겠다
-        Member member = memberRepository.findByBrn(member.getBrn())
+        Member member = memberRepository.findByBrn(brn)
                 .orElseThrow(() -> new RuntimeException("Member not found with BRN: " + carDTO.getCarNumber()));
 
         // Car 엔티티 생성 및 저장
