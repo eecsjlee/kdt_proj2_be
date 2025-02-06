@@ -15,5 +15,4 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(new MyWebSocketHandler(), "/ws")
                 .setAllowedOrigins("*"); // CORS 설정 (허용 도메인)
     }
-
 }
