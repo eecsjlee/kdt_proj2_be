@@ -1,21 +1,14 @@
 package com.kdt_proj2_be.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@ToString
+@Getter @Setter @ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,9 +20,6 @@ public class Member {
 //  @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "brn", nullable = false)
     private String brn; // 사업자 번호
-
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-//    private List<Car> cars = new ArrayList<>();
 
     @Column(name = "user_id", unique = true, nullable = false)
     private String userId;

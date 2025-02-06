@@ -81,5 +81,4 @@ public class MemberService {
         // 변경 사항 저장
         memberRepository.save(member);
     }
-
 }

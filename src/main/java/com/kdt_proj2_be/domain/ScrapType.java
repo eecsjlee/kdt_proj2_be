@@ -19,7 +19,7 @@ public class ScrapType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer scrapTypeId;
+    private Long scrapTypeId;
 
     private String scrapType;
 

@@ -17,8 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j; // 로깅 기능을 위한 Lombok 어노테이션 사용
 
-@Slf4j
+@Slf4j // 로깅 기능 추가 (Lombok 사용)
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "member API", description = "멤버 정보를 담당하는 API")

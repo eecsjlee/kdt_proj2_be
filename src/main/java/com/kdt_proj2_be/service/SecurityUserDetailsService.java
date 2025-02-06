@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class SecurityUserDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
