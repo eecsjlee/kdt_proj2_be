@@ -30,7 +30,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private final MemberRepository memberRepository;
 
-    //순차적으로 요청을 처리할수 있는 각 필터
+    // 순차적으로 요청을 처리할수 있는 각 필터
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println("JWTAuthorizationFilter doFilterInternal");  // 버그 체크 용도
@@ -40,14 +40,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String jwtToken = srcToken.replace("Bearer ",""); //토큰에서 bearer제거후 문자열 저장
+        String jwtToken = srcToken.replace("Bearer ",""); // 토큰에서 bearer제거후 문자열 저장
 
         if (JWTUtil.isExpired(jwtToken)) {
             System.out.println("JWT Token has expired"); // 응답 상태 코드 설정: 401 Unauthorized
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드
             return;
         }
-        //build()검증객체 생성 verify 토큰 검증 username의 클레임값을 문자열로 반환
+        // build()검증객체 생성 verify 토큰 검증 username의 클레임값을 문자열로 반환
         String userId = JWT.require(Algorithm.HMAC256("com.pnu.jwt")).build().verify(jwtToken).getClaim("username").asString();
 
         Optional<Member> opt = memberRepository.findByUserId(userId);
@@ -61,7 +61,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         User user = new User(findmember.getUserId(),findmember.getPassword(),
                 AuthorityUtils.createAuthorityList(findmember.getRole().toString()));
         // Authentication 객체를 생성 : 사용자명과 권한 관리를 위한 정보를 입력(암호는 필요 없음)
-        Authentication auth = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
+        Authentication auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         // 시큐리티 세션에 등록
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
