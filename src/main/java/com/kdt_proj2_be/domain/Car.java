@@ -18,9 +18,12 @@ public class Car {
     @Column(name = "car_number")
     private String carNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "brn", nullable = false) //외래 키 매핑
-    private Member member;
+    @Column
+    private String brn;
+
+//    @ManyToOne
+//    @JoinColumn(name = "brn", nullable = false) //외래 키 매핑
+//    private Member member;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -29,4 +32,6 @@ public class Car {
 
     @Column(name = "image")
     private String image; // 이미지 파일 URL
+
+
 }
