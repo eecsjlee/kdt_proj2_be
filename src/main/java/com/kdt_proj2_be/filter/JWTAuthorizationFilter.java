@@ -3,7 +3,6 @@ package com.kdt_proj2_be.filter;
 // 이 코드는 Spring Security에서 JWT 기반 인증 및 권한 부여(Authorization)를 처리하기 위한 필터 클래스입니다.
 // JWTAuthorizationFilter는 요청이 들어올 때 사용자가 제공한 JWT를 확인하여 인증된 사용자인지 확인하고, 권한(Role)을 기반으로 인가(Authorization)를 수행합니다.
 
-
 import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.persistence.MemberRepository;
 import com.kdt_proj2_be.util.JWTUtil;
@@ -12,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -25,6 +25,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import java.io.IOException;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
