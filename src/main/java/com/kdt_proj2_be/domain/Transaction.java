@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity @Getter @Setter
@@ -18,6 +17,8 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transaction_id; // 기본 키
+
+    private String carNumber;
 
     private String inImg1; // 이미지 파일
     private String inImg2; // 이미지 파일
@@ -41,9 +42,6 @@ public class Transaction {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    private String license_plate1; // 이미지 파일 URL
-    private String license_plate2; // 이미지 파일 URL
 
 //    @PrePersist
 //    @PreUpdate

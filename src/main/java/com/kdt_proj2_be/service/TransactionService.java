@@ -2,12 +2,8 @@ package com.kdt_proj2_be.service;
 
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.TransactionDTO;
-import com.kdt_proj2_be.persistence.CarRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,7 +51,7 @@ public class TransactionService {
 
 
     public Transaction registerTransaction(TransactionDTO transactionDTO) throws IOException {
-        log.info("테스트");
+
         // Transaction 엔티티 생성
         Transaction transaction = Transaction.builder()
 //                .transactionStatus(transactionDTO.getTransactionStatus())
@@ -63,36 +59,35 @@ public class TransactionService {
 //                .purchaseAmount(transactionDTO.getPurchaseAmount())
 //                .entryWeight(transactionDTO.getEntryWeight())
 //                .exitWeight(transactionDTO.getExitWeight())
+                .carNumber(transactionDTO.getCarNumber())
                 .entryTime(transactionDTO.getEntryTime())
 //                .exitTime(transactionDTO.getExitTime())
                 .updatedAt(LocalDateTime.now()) // 업데이트 시간 설정
-//                .license_plate1(transactionDTO.getLicensePlate1())
-//                .license_plate2(transactionDTO.getLicensePlate2())
                 .build();
 
         // Upload images and set them in the transaction
         String inImg1 = uploadImage(transactionDTO.getInImg1(), "inImg1");
-//        String inImg2 = uploadImage(transactionDTO.getInImg2(), "inImg2");
-//        String inImg3 = uploadImage(transactionDTO.getInImg3(), "inImg3");
+        String inImg2 = uploadImage(transactionDTO.getInImg2(), "inImg2");
+        String inImg3 = uploadImage(transactionDTO.getInImg3(), "inImg3");
 
         transaction.setInImg1(inImg1);
-//        transaction.setInImg2(inImg2);
-//        transaction.setInImg3(inImg3);
+        transaction.setInImg2(inImg2);
+        transaction.setInImg3(inImg3);
 
         return transactionRepository.save(transaction);
     }
 
     // 입차 중량
     public Transaction entryWeight(Transaction transaction) {
-
         return transactionRepository.save(transaction); // 저장
     }
+
     // 출차 중량
     public Transaction exitWeight(Transaction transaction) {
-
         return transactionRepository.save(transaction); // 저장
     }
 
+    // 거래 정보
     public TransactionService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
@@ -101,6 +96,7 @@ public class TransactionService {
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll(); // 모든 거래 데이터 조회
     }
+
 
 
 
@@ -119,4 +115,5 @@ public class TransactionService {
 //        // 업데이트된 트랜잭션 저장
 //        return transactionRepository.save(trans);
 //    }
+
 }

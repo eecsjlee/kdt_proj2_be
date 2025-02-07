@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity @Getter @Setter

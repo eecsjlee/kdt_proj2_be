@@ -35,7 +35,5 @@ public class TransactionDTO {
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;
     private LocalDateTime updatedAt;
-    private String licensePlate1;
-    private String licensePlate2;
 
 }

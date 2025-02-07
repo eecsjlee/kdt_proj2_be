@@ -21,7 +21,9 @@ public class ScrapType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scrapTypeId;
 
-    private String scrapType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "scrap_type", nullable = false)
+    private ScrapMetalType scrapType;
 
     @OneToMany(mappedBy = "scrapType")
     private List<ScrapPrice> prices;
@@ -32,5 +34,4 @@ public class ScrapType {
                 .map(ScrapPrice::getPrice)
                 .orElse(BigDecimal.ZERO);
     }
-
 }
