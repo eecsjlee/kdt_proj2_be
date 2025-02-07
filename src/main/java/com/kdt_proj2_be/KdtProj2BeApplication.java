@@ -9,5 +9,4 @@ public class KdtProj2BeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(KdtProj2BeApplication.class, args);
 	}
-
 }

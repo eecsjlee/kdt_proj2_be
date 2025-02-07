@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.kdt_proj2_be.domain.Car;
+import com.kdt_proj2_be.domain.RequestStatus;
 import com.kdt_proj2_be.dto.CarDTO;
 import com.kdt_proj2_be.persistence.CarRepository;
 import com.kdt_proj2_be.persistence.MemberRepository;
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.kdt_proj2_be.domain.RequestStatus.APPROVED;
 
 @Service
 @RequiredArgsConstructor
@@ -108,6 +111,17 @@ public class CarService {
         }
         return userImgName;
     }
+
+    // 차량 승인
+    public Car approvedCar(Car car) throws IOException {
+
+        // 승인 처리
+        car.setRequestStatus(RequestStatus.valueOf("APPROVED"));
+
+        // 변경 사항 저장
+        return carRepository.save(car);
+    }
+
 
     // 차량 정보 수정
     public Car updateCar(CarDTO carDTO) throws IOException {

@@ -4,11 +4,8 @@ package com.kdt_proj2_be.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Getter
-@Setter
-@ToString
-@Builder
+@Entity @Getter @Setter
+@ToString @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "car")

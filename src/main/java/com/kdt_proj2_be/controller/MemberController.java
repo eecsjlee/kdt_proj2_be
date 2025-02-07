@@ -1,23 +1,16 @@
 package com.kdt_proj2_be.controller;
 
 import com.kdt_proj2_be.domain.Member;
-import com.kdt_proj2_be.domain.Role;
 import com.kdt_proj2_be.persistence.MemberRepository;
 import com.kdt_proj2_be.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import lombok.extern.slf4j.Slf4j; // 로깅 기능을 위한 Lombok 어노테이션 사용
 
 @Slf4j // 로깅 기능 추가 (Lombok 사용)
 @RestController

@@ -59,4 +59,16 @@ public class CarController {
         return carService.getCarData(authentication);
     }
 
+    @PatchMapping("/{carNumber}/approved")
+    public ResponseEntity<String> approvedCar(@PathVariable String carNumber) throws IOException {
+
+        Car car = Car.builder()
+                .carNumber(carNumber)
+                .build();
+
+        carService.approvedCar(car);
+
+        return ResponseEntity.ok("car has been approved successfully.");
+    }
+
 }
