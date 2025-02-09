@@ -1,5 +1,6 @@
 package com.kdt_proj2_be.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,13 +26,15 @@ public class ScrapType {
     @Column(name = "scrap_type", nullable = false)
     private ScrapMetalType scrapType;
 
+
     @OneToMany(mappedBy = "scrapType")
+    @JsonIgnore // ScrapType 객체를 JSON으로 변환할 때 prices 필드 직렬화를 막음
     private List<ScrapPrice> prices;
 
-    public BigDecimal getLatestPrice() {
-        return prices.stream()
-                .max(Comparator.comparing(ScrapPrice::getEffectiveDate)) // 가장 최근 가격 찾기
-                .map(ScrapPrice::getPrice)
-                .orElse(BigDecimal.ZERO);
-    }
+//    public BigDecimal getLatestPrice() {
+//        return prices.stream()
+//                .max(Comparator.comparing(ScrapPrice::getEffectiveDate)) // 가장 최근 가격 찾기
+//                .map(ScrapPrice::getPrice)
+//                .orElse(BigDecimal.ZERO);
+//    }
 }
