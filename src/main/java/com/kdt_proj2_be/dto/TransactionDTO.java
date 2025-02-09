@@ -32,6 +32,7 @@ public class TransactionDTO {
     private BigDecimal purchaseAmount;
     private BigDecimal entryWeight;
     private BigDecimal exitWeight;
+    private BigDecimal totalWeight;
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;
     private LocalDateTime updatedAt;

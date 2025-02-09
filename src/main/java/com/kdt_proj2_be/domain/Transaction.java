@@ -18,15 +18,23 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transaction_id; // 기본 키
 
+//    @ManyToOne
+//    @JoinColumn(name = "carNumber", nullable = false) //외래 키 매핑
+//    private Car car;
+
     private String carNumber;
 
     private String inImg1; // 이미지 파일
     private String inImg2; // 이미지 파일
     private String inImg3; // 이미지 파일
 
+    private String outImg1; // 이미지 파일
+    private String outImg2; // 이미지 파일
+    private String outImg3; // 이미지 파일
+
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_status", nullable = true)
-    private TransactionStatus transactionStatus; // 거래 상태 (enum 타입)
+    private TransactionStatus transactionStatus; // 거래 상태
 
     private BigDecimal entryWeight; // 입차 중량
 
@@ -42,6 +50,8 @@ public class Transaction {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    private BigDecimal purchaseAmount;
 
 //    @PrePersist
 //    @PreUpdate
@@ -64,4 +74,5 @@ public class Transaction {
 //        // 가장 최근 가격을 찾는 로직 (DB 조회 필요)
 //        return scrapType.getLatestPrice(); // ScrapType 엔티티에서 가격을 가져오는 메서드 호출
 //    }
+
 }

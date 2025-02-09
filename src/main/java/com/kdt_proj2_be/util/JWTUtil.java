@@ -41,7 +41,8 @@ public class JWTUtil {
 
             String tok = getJWTSource(token);
             return JWT.require(Algorithm.HMAC256(JWT_KEY)).build().verify(tok).getExpiresAt().before(new Date());
-        }catch (TokenExpiredException e) {
+        }
+        catch (TokenExpiredException e) {
             return true;
         }
     }

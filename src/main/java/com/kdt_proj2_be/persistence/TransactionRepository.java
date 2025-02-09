@@ -10,11 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+    Transaction findByCarNumber(String carNumber);
 
 
-
-//    // TODO: 한번 더 쿼리를 만줘 져야함
-//    @Query("SELECT t FROM Transaction t WHERE t.licensePlate1 = :carNumber AND t.exitDate IS NULL ORDER BY t.entryDate DESC LIMIT 1")
+//
+//    @Query("SELECT t FROM Transaction t WHERE t.carNumber = :carNumber AND t.exitDate IS NULL ORDER BY t.entryDate DESC LIMIT 1")
 //    Optional<Transaction> findLatestUnExitedEntryByCarNumber(@Param("carNumber") String carNumber);
 
 }

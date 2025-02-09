@@ -17,7 +17,7 @@ public class ScrapPrice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer scrapPriceId;
+    private Long scrapPriceId;
 
     @ManyToOne
     @JoinColumn(name = "scrap_type_id")

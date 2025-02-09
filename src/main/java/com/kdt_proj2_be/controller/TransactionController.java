@@ -58,26 +58,27 @@ public class TransactionController {
 
         // CarService 호출로 업데이트 처리
         return transactionService.registerTransaction(transactionDTO);
-
     }
 
 
-    @PatchMapping("/{transaction_id}/entry")
+    @PutMapping("/{transaction_id}/entry")
     public Transaction entryWeight(@RequestBody Transaction transaction) {
         return transactionService.entryWeight(transaction);
     }
 
-    @PatchMapping("/{transaction_id}/exit")
+    @PutMapping("/{transaction_id}/exit")
     public Transaction exitWeight(@RequestBody Transaction transaction) {
         return transactionService.exitWeight(transaction);
     }
 
-//    @PatchMapping("/{carNumber}/exit")
+//    @PutMapping("/{carNumber}/exit")
 //    public Transaction putExitDate(
 //            @PathVariable("carNumber") String carNumber,
 //            @RequestParam("exitWeight") BigDecimal exitWeight) {
 //        return transactionService.putExitDate(carNumber, exitWeight);
 //    }
+
+
 
     @GetMapping
     public ResponseEntity<List<Transaction>> getAllTransactions() {

@@ -1,13 +1,18 @@
 package com.kdt_proj2_be.service;
 
+import com.kdt_proj2_be.domain.ScrapPrice;
+import com.kdt_proj2_be.domain.ScrapType;
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.TransactionDTO;
+import com.kdt_proj2_be.persistence.ScrapPriceRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -21,6 +26,7 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final ScrapPriceRepository scrapPriceRepository;
 
     // Image upload method
     private String uploadImage(MultipartFile file, String prefix) throws IOException {
@@ -88,16 +94,15 @@ public class TransactionService {
     }
 
     // 거래 정보
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, ScrapPriceRepository scrapPriceRepository) {
         this.transactionRepository = transactionRepository;
+        this.scrapPriceRepository = scrapPriceRepository;
     }
 
     // 모든 거래 조회
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll(); // 모든 거래 데이터 조회
     }
-
-
 
 
 //    public Transaction putExitDate(String carNumber, BigDecimal exitWeight) {
@@ -115,5 +120,33 @@ public class TransactionService {
 //        // 업데이트된 트랜잭션 저장
 //        return transactionRepository.save(trans);
 //    }
+
+    // 고철 중량, 거래 총액 구하는 기능
+    public Transaction getScrapTotalWeight(BigDecimal exitWeight, String carNumber, ScrapType scrapType) {
+
+        // carNumber(차량 번호)를 기준으로 거래(Transaction)를 조회합니다.
+        Transaction transaction = transactionRepository.findByCarNumber(carNumber);
+
+        // 거래의 입고 중량(entryWeight)을 가져옵니다.
+        BigDecimal entryWeight = transaction.getEntryWeight();
+
+        // 입고 중량에서 출고 중량(exitWeight)을 빼서 스크랩 총 중량(totalWeight)을 계산합니다.
+        BigDecimal totalWeight = entryWeight.subtract(exitWeight);
+
+        // 계산된 총 중량을 거래 객체에 저장합니다.
+        transaction.setTotalWeight(totalWeight);
+
+        // scrapType(스크랩 종류)에 해당하는 가격 정보를 조회합니다.
+        ScrapPrice scrapTypePrice = scrapPriceRepository.findPriceByScrapType(scrapType);
+
+        // 총 중량과 스크랩 가격을 곱하여 구매 금액(purchaseAmount)을 계산합니다.
+        BigDecimal purchaseAmount = totalWeight.multiply(scrapTypePrice.getPrice());
+
+        // 계산된 구매 금액을 거래 객체에 저장합니다.
+        transaction.setPurchaseAmount(purchaseAmount);
+
+        // 업데이트된 거래 정보를 데이터베이스에 저장한 후 반환합니다.
+        return transactionRepository.save(transaction);
+    }
 
 }
