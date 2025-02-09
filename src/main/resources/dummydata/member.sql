@@ -1,0 +1,122 @@
+[
+    {
+        "brn": "123-27-32342",
+        "userId": "bakdu1",
+        "password": "password1",
+        "name": "박두자원",
+        "emailAddress": "ceo1@bakdujw.kr",
+        "carNumber": "부산 10 아 55421",
+        "postalCode": "23533",
+        "address": "부산 금정구 대학로 56",
+        "detailAddress": "과학기술연구동 402호",
+        "contact": "010-2345-6001"
+    },
+    {
+        "brn": "234-56-78901",
+        "userId": "bakdu2",
+        "password": "password2",
+        "name": "철수자원",
+        "emailAddress": "ceo2@bakdujw.kr",
+        "carNumber": "서울 32 바 12345",
+        "postalCode": "04567",
+        "address": "서울 강남구 테헤란로 85",
+        "detailAddress": "스타트업센터 101호",
+        "contact": "010-2345-6002"
+    },
+    {
+        "brn": "345-67-89012",
+        "userId": "bakdu3",
+        "password": "password3",
+        "name": "영희환경",
+        "emailAddress": "ceo3@bakdujw.kr",
+        "carNumber": "대구 12 가 67890",
+        "postalCode": "42356",
+        "address": "대구 중구 동성로 78",
+        "detailAddress": "상가 3층 205호",
+        "contact": "010-2345-6003"
+    },
+    {
+        "brn": "456-78-90123",
+        "userId": "bakdu4",
+        "password": "password4",
+        "name": "최성환경",
+        "emailAddress": "ceo4@bakdujw.kr",
+        "carNumber": "광주 44 나 56789",
+        "postalCode": "61045",
+        "address": "광주 서구 무진대로 34",
+        "detailAddress": "무역센터 5층",
+        "contact": "010-2345-6004"
+    },
+    {
+        "brn": "567-89-01234",
+        "userId": "bakdu5",
+        "password": "password5",
+        "name": "강현고철",
+        "emailAddress": "ceo5@bakdujw.kr",
+        "carNumber": "부산 56 다 43210",
+        "postalCode": "48567",
+        "address": "부산 사상구 괘감로 21",
+        "detailAddress": "철강공장 2층",
+        "contact": "010-2345-6005"
+    },
+    {
+        "brn": "678-90-12345",
+        "userId": "bakdu6",
+        "password": "password6",
+        "name": "윤정건설",
+        "emailAddress": "ceo6@bakdujw.kr",
+        "carNumber": "인천 78 라 76543",
+        "postalCode": "21589",
+        "address": "인천 연수구 송도대로 100",
+        "detailAddress": "건설사 사무실",
+        "contact": "010-2345-6006"
+    },
+    {
+        "brn": "789-01-23456",
+        "userId": "bakdu7",
+        "password": "password7",
+        "name": "정호재생",
+        "emailAddress": "ceo7@bakdujw.kr",
+        "carNumber": "대전 88 마 34567",
+        "postalCode": "34980",
+        "address": "대전 유성구 대학로 42",
+        "detailAddress": "공장 1동",
+        "contact": "010-2345-6007"
+    },
+    {
+        "brn": "890-12-34567",
+        "userId": "bakdu8",
+        "password": "password8",
+        "name": "신세계유통",
+        "emailAddress": "ceo8@bakdujw.kr",
+        "carNumber": "울산 99 바 98765",
+        "postalCode": "44756",
+        "address": "울산 남구 산업로 12",
+        "detailAddress": "유통창고 B1층",
+        "contact": "010-2345-6056"
+    },
+    {
+        "brn": "901-23-45678",
+        "userId": "bakdu9",
+        "password": "password9",
+        "name": "삼성환경",
+        "emailAddress": "ceo9@bakdujw.kr",
+        "carNumber": "전주 11 사 54321",
+        "postalCode": "54987",
+        "address": "전북 전주시 덕진구 백제대로 76",
+        "detailAddress": "환경시설 2층",
+        "contact": "010-2345-6119"
+    },
+    {
+        "brn": "012-34-56789",
+        "userId": "bakdu10",
+        "password": "password10",
+        "name": "KD제철",
+        "emailAddress": "ceo10@bakdujw.kr",
+        "carNumber": "강릉 22 아 10987",
+        "postalCode": "25478",
+        "address": "강원 강릉시 경포로 55",
+        "detailAddress": "제철공장 103호",
+        "contact": "010-2345-6010"
+    }
+]
