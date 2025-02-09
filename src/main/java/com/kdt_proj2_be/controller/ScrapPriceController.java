@@ -2,6 +2,7 @@ package com.kdt_proj2_be.controller;
 
 import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.domain.ScrapPrice;
+import com.kdt_proj2_be.dto.ScrapPriceRequestDTO;
 import com.kdt_proj2_be.dto.ScrapPriceResponseDTO;
 import com.kdt_proj2_be.service.ScrapPriceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,11 +51,11 @@ public class ScrapPriceController {
 
     @Operation(summary = "고철 가격 입력", description = "고철 가격을 입력합니다.")
     @PostMapping("/prices") // POST 요청
-    public ScrapPrice registerPrice (@RequestBody ScrapPrice scrapPrice) {
+    public ResponseEntity<ScrapPrice> registerPrice(@RequestBody ScrapPriceRequestDTO requestDTO) {
 
-        return ScrapPriceService.registerPrices(scrapPrice);
+        ScrapPrice savedPrice = scrapPriceService.registerPrice(requestDTO); // DTO를 전달하여 변환 및 저장
+
+        return ResponseEntity.ok(savedPrice);
     }
-
-
 
 }

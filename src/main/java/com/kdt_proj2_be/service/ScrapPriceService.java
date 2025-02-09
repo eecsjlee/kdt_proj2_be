@@ -2,8 +2,11 @@ package com.kdt_proj2_be.service;
 
 import com.kdt_proj2_be.domain.ScrapMetalType;
 import com.kdt_proj2_be.domain.ScrapPrice;
+import com.kdt_proj2_be.domain.ScrapType;
+import com.kdt_proj2_be.dto.ScrapPriceRequestDTO;
 import com.kdt_proj2_be.dto.ScrapPriceResponseDTO;
 import com.kdt_proj2_be.persistence.ScrapPriceRepository;
+import com.kdt_proj2_be.persistence.ScrapTypeRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,9 +19,11 @@ import java.util.stream.Collectors;
 public class ScrapPriceService {
 
     private final ScrapPriceRepository scrapPriceRepository;
+    private final ScrapTypeRepository scrapTypeRepository; // ScrapType 조회를 위한 Repository
 
-    public ScrapPriceService(ScrapPriceRepository scrapPriceRepository) {
+    public ScrapPriceService(ScrapPriceRepository scrapPriceRepository, ScrapTypeRepository scrapTypeRepository) {
         this.scrapPriceRepository = scrapPriceRepository;
+        this.scrapTypeRepository = scrapTypeRepository;
     }
 
     public List<ScrapPriceResponseDTO> getScrapPriceList() {
@@ -49,6 +54,20 @@ public class ScrapPriceService {
         return responses;
     }
 
-    public updatePrices
+    // 고철 가격 정보를  DB에 저장
+    public ScrapPrice registerPrice(ScrapPriceRequestDTO requestDTO) {
 
+        // ENUM 값을 통해 ScrapType 찾기
+        ScrapType scrapType = scrapTypeRepository.findByScrapType(requestDTO.getScrapType())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고철 종류입니다."));
+
+        // 엔티티 변환
+        ScrapPrice scrapPrice = new ScrapPrice();
+        scrapPrice.setScrapType(scrapType);
+        scrapPrice.setPrice(requestDTO.getPrice());
+        scrapPrice.setEffectiveDate(requestDTO.getEffectiveDate());
+
+        // 저장 후 반환
+        return scrapPriceRepository.save(scrapPrice);
+    }
 }
