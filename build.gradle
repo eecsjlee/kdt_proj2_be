@@ -24,7 +24,6 @@ repositories {
 }
 
 dependencies {
-	// 의존성 버전을 명시하지 않아야 맨위에 작성한 버전을 따라간다.
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
