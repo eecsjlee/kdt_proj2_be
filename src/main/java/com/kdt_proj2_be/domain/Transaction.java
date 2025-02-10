@@ -33,8 +33,9 @@ public class Transaction {
     private String outImg3; // 이미지 파일
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     @Column(name = "transaction_status", nullable = true)
-    private TransactionStatus transactionStatus; // 거래 상태
+    private TransactionStatus transactionStatus = TransactionStatus.PENDING; // 승인 상태 (enum 타입)
 
     private BigDecimal entryWeight; // 입차 중량
 
@@ -52,6 +53,13 @@ public class Transaction {
     private LocalDateTime updatedAt;
 
     private BigDecimal purchaseAmount;
+
+
+    // scrapTypeId를 외래키(FK)로 설정
+    @ManyToOne
+    @JoinColumn(name = "scrap_type_id", nullable = false) // FK 설정
+    private ScrapType scrapType;
+
 
 //    @PrePersist
 //    @PreUpdate

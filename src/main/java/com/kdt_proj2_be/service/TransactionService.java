@@ -5,8 +5,10 @@ import com.kdt_proj2_be.domain.ScrapType;
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.TransactionDTO;
 import com.kdt_proj2_be.persistence.ScrapPriceRepository;
+import com.kdt_proj2_be.persistence.ScrapTypeRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,10 +25,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final ScrapPriceRepository scrapPriceRepository;
+    private final ScrapTypeRepository scrapTypeRepository;
 
     // Image upload method
     private String uploadImage(MultipartFile file, String prefix) throws IOException {
@@ -58,20 +62,20 @@ public class TransactionService {
 
     public Transaction registerTransaction(TransactionDTO transactionDTO) throws IOException {
 
+        // ScrapType 조회 (입력된 ENUM 값 기반)
+        ScrapType scrapType = scrapTypeRepository.findByScrapType(transactionDTO.getScrapType())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고철 종류입니다."));
+
         // Transaction 엔티티 생성
         Transaction transaction = Transaction.builder()
-//                .transactionStatus(transactionDTO.getTransactionStatus())
-//                .scrapWeight(transactionDTO.getScrapWeight())
-//                .purchaseAmount(transactionDTO.getPurchaseAmount())
-//                .entryWeight(transactionDTO.getEntryWeight())
-//                .exitWeight(transactionDTO.getExitWeight())
                 .carNumber(transactionDTO.getCarNumber())
                 .entryTime(transactionDTO.getEntryTime())
-//                .exitTime(transactionDTO.getExitTime())
-                .updatedAt(LocalDateTime.now()) // 업데이트 시간 설정
+                .entryWeight(transactionDTO.getEntryWeight()) // entryWeight 추가
+                .scrapType(scrapType) // scrapType 설정
+                .updatedAt(LocalDateTime.now())
                 .build();
 
-        // Upload images and set them in the transaction
+        // 이미지 업로드
         String inImg1 = uploadImage(transactionDTO.getInImg1(), "inImg1");
         String inImg2 = uploadImage(transactionDTO.getInImg2(), "inImg2");
         String inImg3 = uploadImage(transactionDTO.getInImg3(), "inImg3");
@@ -83,6 +87,33 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    // 출차시 거래정보 등록
+    public Transaction exitTransaction(TransactionDTO transactionDTO) throws IOException {
+        String carNumber = transactionDTO.getCarNumber();
+
+        // 🚗 출차되지 않은 최신 거래 조회 (최근 entryTime 기준)
+        Transaction transaction = transactionRepository.findLatestTransactionByCarNumber(carNumber)
+                .orElseThrow(() -> new IllegalArgumentException("해당 차량의 최근 입차 기록이 없습니다."));
+
+        // 📸 출차 이미지 업로드
+        String outImg1 = uploadImage(transactionDTO.getOutImg1(), "outImg1");
+        String outImg2 = uploadImage(transactionDTO.getOutImg2(), "outImg2");
+        String outImg3 = uploadImage(transactionDTO.getOutImg3(), "outImg3");
+
+        // 출차 정보 업데이트
+        transaction.setOutImg1(outImg1);
+        transaction.setOutImg2(outImg2);
+        transaction.setOutImg3(outImg3);
+        transaction.setExitTime(transactionDTO.getExitTime());
+        transaction.setExitWeight(transactionDTO.getExitWeight());
+        transaction.setUpdatedAt(LocalDateTime.now());
+
+        // 저장 후 반환
+        return transactionRepository.save(transaction);
+    }
+
+
+
     // 입차 중량
     public Transaction entryWeight(Transaction transaction) {
         return transactionRepository.save(transaction); // 저장
@@ -93,11 +124,11 @@ public class TransactionService {
         return transactionRepository.save(transaction); // 저장
     }
 
-    // 거래 정보
-    public TransactionService(TransactionRepository transactionRepository, ScrapPriceRepository scrapPriceRepository) {
-        this.transactionRepository = transactionRepository;
-        this.scrapPriceRepository = scrapPriceRepository;
-    }
+//    // 거래 정보
+//    public TransactionService(TransactionRepository transactionRepository, ScrapPriceRepository scrapPriceRepository) {
+//        this.transactionRepository = transactionRepository;
+//        this.scrapPriceRepository = scrapPriceRepository;
+//    }
 
     // 모든 거래 조회
     public List<Transaction> getAllTransactions() {

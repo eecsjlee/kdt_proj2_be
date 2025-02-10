@@ -1,5 +1,6 @@
 package com.kdt_proj2_be.dto;
 
+import com.kdt_proj2_be.domain.ScrapMetalType;
 import com.kdt_proj2_be.domain.TransactionStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,12 +28,11 @@ public class TransactionDTO {
     private Long transactionId;
     private String carNumber;
     private TransactionStatus transactionStatus;
-    private Long scrapTypeId;
-    private BigDecimal scrapWeight;
-    private BigDecimal purchaseAmount;
+    private ScrapMetalType scrapType;
     private BigDecimal entryWeight;
     private BigDecimal exitWeight;
     private BigDecimal totalWeight;
+    private BigDecimal purchaseAmount;
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;
     private LocalDateTime updatedAt;

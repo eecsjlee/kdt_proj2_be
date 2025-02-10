@@ -12,6 +12,9 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     Transaction findByCarNumber(String carNumber);
 
+    // 차번호 중 가장 최근 입차한 차량을 찾음
+    @Query("SELECT t FROM Transaction t WHERE t.carNumber = :carNumber ORDER BY t.entryTime DESC LIMIT 1")
+    Optional<Transaction> findLatestTransactionByCarNumber(@Param("carNumber") String carNumber);
 
 //
 //    @Query("SELECT t FROM Transaction t WHERE t.carNumber = :carNumber AND t.exitDate IS NULL ORDER BY t.entryDate DESC LIMIT 1")
