@@ -54,33 +54,9 @@ public class Transaction {
 
     private BigDecimal purchaseAmount;
 
-
     // scrapTypeId를 외래키(FK)로 설정
     @ManyToOne
     @JoinColumn(name = "scrap_type_id", nullable = false) // FK 설정
     private ScrapType scrapType;
-
-
-//    @PrePersist
-//    @PreUpdate
-//    public void calculateWeightsAndAmount() {
-//        // 출차 중량과 입차 중량이 유효한 경우 scrapWeight 계산
-//        if (entryWeight != null && exitWeight != null) {
-//            this.scrapWeight = entryWeight.subtract(exitWeight);
-//        }
-//
-//        // scrapWeight와 scrapType이 유효한 경우 purchaseAmount 계산
-//        if (scrapWeight != null && scrapType != null) {
-//            BigDecimal price = getLatestPrice(scrapType);
-//            if (price != null) {
-//                this.purchaseAmount = price.multiply(scrapWeight);
-//            }
-//        }
-//    }
-//
-//    private BigDecimal getLatestPrice(ScrapType scrapType) {
-//        // 가장 최근 가격을 찾는 로직 (DB 조회 필요)
-//        return scrapType.getLatestPrice(); // ScrapType 엔티티에서 가격을 가져오는 메서드 호출
-//    }
 
 }

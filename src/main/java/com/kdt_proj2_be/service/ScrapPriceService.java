@@ -7,6 +7,7 @@ import com.kdt_proj2_be.dto.ScrapPriceRequestDTO;
 import com.kdt_proj2_be.dto.ScrapPriceResponseDTO;
 import com.kdt_proj2_be.persistence.ScrapPriceRepository;
 import com.kdt_proj2_be.persistence.ScrapTypeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,15 +17,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ScrapPriceService {
 
     private final ScrapPriceRepository scrapPriceRepository;
     private final ScrapTypeRepository scrapTypeRepository; // ScrapType 조회를 위한 Repository
 
-    public ScrapPriceService(ScrapPriceRepository scrapPriceRepository, ScrapTypeRepository scrapTypeRepository) {
-        this.scrapPriceRepository = scrapPriceRepository;
-        this.scrapTypeRepository = scrapTypeRepository;
-    }
+//    public ScrapPriceService(ScrapPriceRepository scrapPriceRepository, ScrapTypeRepository scrapTypeRepository) {
+//        this.scrapPriceRepository = scrapPriceRepository;
+//        this.scrapTypeRepository = scrapTypeRepository;
+//    } @RequiredArgsConstructor 추가하고 삭제
 
     public List<ScrapPriceResponseDTO> getScrapPriceList() {
 

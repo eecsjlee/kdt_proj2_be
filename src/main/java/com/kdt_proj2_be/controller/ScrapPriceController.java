@@ -67,6 +67,4 @@ public class ScrapPriceController {
 
         return ResponseEntity.ok("Scrap prices successfully saved!");
     }
-
-
 }

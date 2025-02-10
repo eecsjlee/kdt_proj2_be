@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ScrapPriceRepository extends JpaRepository<ScrapPrice, Integer> {
 
@@ -27,5 +28,10 @@ public interface ScrapPriceRepository extends JpaRepository<ScrapPrice, Integer>
 
 
     ScrapPrice findPriceByScrapType(ScrapType scrapType);
+
+    @Query("SELECT sp FROM ScrapPrice sp WHERE sp.scrapType = :scrapType AND sp.effectiveDate <= :entryTime ORDER BY sp.effectiveDate DESC LIMIT 1")
+    Optional<ScrapPrice> findLatestPriceBeforeEntryTime(@Param("scrapType") ScrapType scrapType, @Param("entryTime") LocalDateTime entryTime);
+
+
 
 }

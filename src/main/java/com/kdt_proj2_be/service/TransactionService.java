@@ -32,6 +32,7 @@ public class TransactionService {
     private final ScrapPriceRepository scrapPriceRepository;
     private final ScrapTypeRepository scrapTypeRepository;
 
+
     // Image upload method
     private String uploadImage(MultipartFile file, String prefix) throws IOException {
         if (file == null || file.isEmpty()) {
@@ -92,7 +93,7 @@ public class TransactionService {
         String carNumber = transactionDTO.getCarNumber();
 
         // 🚗 출차되지 않은 최신 거래 조회 (최근 entryTime 기준)
-        Transaction transaction = transactionRepository.findLatestTransactionByCarNumber(carNumber)
+        Transaction transaction = transactionRepository.findFirstByCarNumberOrderByEntryTimeDesc(carNumber)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량의 최근 입차 기록이 없습니다."));
 
         // 📸 출차 이미지 업로드
@@ -100,12 +101,54 @@ public class TransactionService {
         String outImg2 = uploadImage(transactionDTO.getOutImg2(), "outImg2");
         String outImg3 = uploadImage(transactionDTO.getOutImg3(), "outImg3");
 
+//        // 출차 정보 업데이트
+//        transaction.setOutImg1(outImg1);
+//        transaction.setOutImg2(outImg2);
+//        transaction.setOutImg3(outImg3);
+//        transaction.setExitTime(transactionDTO.getExitTime());
+//        transaction.setExitWeight(transactionDTO.getExitWeight());
+//        transaction.setUpdatedAt(LocalDateTime.now());
+//
+//        // 저장 후 반환
+//        return transactionRepository.save(transaction);
+
+
+
+        // entryWeight와 exitWeight를 활용한 totalWeight 계산
+        BigDecimal entryWeight = transaction.getEntryWeight();
+        BigDecimal exitWeight = transactionDTO.getExitWeight();
+
+        // 🚨 `entryWeight` 또는 `exitWeight`가 `null`이면 예외 발생
+        if (entryWeight == null || exitWeight == null) {
+            throw new IllegalArgumentException("입차 중량(entryWeight) 또는 출차 중량(exitWeight)이 null입니다.");
+        }
+
+        // ✅ `exitWeight`가 `entryWeight`보다 크면 예외 발생 (정상적인 출차 데이터가 아님)
+        if (exitWeight.compareTo(entryWeight) > 0) {
+            throw new IllegalArgumentException("출차 중량이 입차 중량보다 클 수 없습니다.");
+        }
+
+        BigDecimal totalWeight = entryWeight.subtract(exitWeight); // ✅ 총 중량 계산
+
+        // 💰 ScrapType을 이용하여 `purchaseAmount` 계산
+        ScrapType scrapType = transaction.getScrapType();
+
+        // ✅ 입차 시점(`entryTime`) 기준으로 해당 고철의 가격 조회
+        ScrapPrice scrapPrice = scrapPriceRepository.findLatestPriceBeforeEntryTime(scrapType, transaction.getEntryTime())
+                .orElseThrow(() -> new IllegalArgumentException("입차 시점의 해당 고철 가격 정보가 없습니다."));
+
+
+
+        BigDecimal purchaseAmount = totalWeight.multiply(scrapPrice.getPrice()); // 구매 금액 계산
+
         // 출차 정보 업데이트
         transaction.setOutImg1(outImg1);
         transaction.setOutImg2(outImg2);
         transaction.setOutImg3(outImg3);
         transaction.setExitTime(transactionDTO.getExitTime());
-        transaction.setExitWeight(transactionDTO.getExitWeight());
+        transaction.setExitWeight(exitWeight);
+        transaction.setTotalWeight(totalWeight);
+        transaction.setPurchaseAmount(purchaseAmount);
         transaction.setUpdatedAt(LocalDateTime.now());
 
         // 저장 후 반환
@@ -114,27 +157,11 @@ public class TransactionService {
 
 
 
-    // 입차 중량
-    public Transaction entryWeight(Transaction transaction) {
-        return transactionRepository.save(transaction); // 저장
-    }
-
-    // 출차 중량
-    public Transaction exitWeight(Transaction transaction) {
-        return transactionRepository.save(transaction); // 저장
-    }
-
-//    // 거래 정보
-//    public TransactionService(TransactionRepository transactionRepository, ScrapPriceRepository scrapPriceRepository) {
-//        this.transactionRepository = transactionRepository;
-//        this.scrapPriceRepository = scrapPriceRepository;
-//    }
 
     // 모든 거래 조회
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll(); // 모든 거래 데이터 조회
     }
-
 
 //    public Transaction putExitDate(String carNumber, BigDecimal exitWeight) {
 //        // 출차되지 않은 가장 최근의 거래 가져오기

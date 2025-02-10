@@ -16,8 +16,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT t FROM Transaction t WHERE t.carNumber = :carNumber ORDER BY t.entryTime DESC LIMIT 1")
     Optional<Transaction> findLatestTransactionByCarNumber(@Param("carNumber") String carNumber);
 
-//
-//    @Query("SELECT t FROM Transaction t WHERE t.carNumber = :carNumber AND t.exitDate IS NULL ORDER BY t.entryDate DESC LIMIT 1")
-//    Optional<Transaction> findLatestUnExitedEntryByCarNumber(@Param("carNumber") String carNumber);
+    Optional<Transaction> findFirstByCarNumberOrderByEntryTimeDesc(String carNumber);
 
 }
