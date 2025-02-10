@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -48,18 +49,22 @@ public class CarController {
         return carService.registerCar(carDTO);
     }
 
-//    @PostMapping
-//    public Car registerCar(@RequestBody CarDTO carDTO) throws IOException {
-//        log.info("Registering Car with DTO: {}", carDTO); // 확인
-//        return carService.registerCar(carDTO);
-//    }
-
+    // 모든 차량 정보를 JSON으로 반환
     @GetMapping
-    public ResponseEntity<Car> getUserData(Authentication authentication) {
-        return carService.getCarData(authentication);
+    public ResponseEntity<List<CarDTO>> getAllCars() {
+        List<CarDTO> cars = carService.getAllCars();
+        return ResponseEntity.ok(cars);
     }
 
-    @PatchMapping("/{carNumber}/approved")
+    // 특정 차량 번호로 차량 정보를 JSON으로 반환
+    @GetMapping("/{carNumber}")
+    public ResponseEntity<CarDTO> getCarByNumber(@PathVariable String carNumber) {
+        CarDTO carDTO = carService.getCarByNumber(carNumber);
+        return ResponseEntity.ok(carDTO);
+    }
+
+
+    @PutMapping("/{carNumber}/approved")
     public ResponseEntity<String> approvedCar(@PathVariable String carNumber) throws IOException {
 
         Car car = Car.builder()
@@ -70,5 +75,15 @@ public class CarController {
 
         return ResponseEntity.ok("car has been approved successfully.");
     }
+
+
+    // ✅ 차량 상태 일괄 변경 (PENDING → APPROVED / REJECTED)
+    @PutMapping("/status")
+    public ResponseEntity<List<CarDTO>> updateCarStatuses(@RequestBody List<CarDTO> carDTOList) {
+        List<CarDTO> updatedCars = carService.updateCarStatuses(carDTOList);
+        return ResponseEntity.ok(updatedCars);
+    }
+
+
 
 }

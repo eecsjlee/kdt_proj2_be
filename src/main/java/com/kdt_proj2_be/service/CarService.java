@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import com.kdt_proj2_be.domain.Car;
 import com.kdt_proj2_be.domain.RequestStatus;
@@ -150,4 +151,67 @@ public class CarService {
         return carRepository.save(car);
 
     }
+
+
+
+
+    // ✅ 모든 차량을 `CarDTO` 리스트로 변환하여 반환
+    public List<CarDTO> getAllCars() {
+        return carRepository.findAll().stream().map(car ->
+                CarDTO.builder()
+                        .carNumber(car.getCarNumber())
+                        .brn(car.getBrn())
+                        .requestStatus(car.getRequestStatus())
+                        .build()
+        ).toList();
+    }
+
+    // 특정 차량을 CarDTO로 변환하여 반환
+    public CarDTO getCarByNumber(String carNumber) {
+        Car car = carRepository.findByCarNumber(carNumber)
+                .orElseThrow(() -> new RuntimeException("차량 정보를 찾을 수 없습니다. 차량 번호: " + carNumber));
+
+        return CarDTO.builder()
+                .carNumber(car.getCarNumber())
+                .brn(car.getBrn())
+                .requestStatus(car.getRequestStatus())
+                .build();
+    }
+
+
+
+
+    // ✅ 여러 차량 상태 변경
+    public List<CarDTO> updateCarStatuses(List<CarDTO> carDTOList) {
+        List<CarDTO> updatedCars = carDTOList.stream().map(carDTO -> {
+            Car car = carRepository.findByCarNumber(carDTO.getCarNumber())
+                    .orElseThrow(() -> new RuntimeException("차량 정보를 찾을 수 없습니다: " + carDTO.getCarNumber()));
+
+            // 🚗 `PENDING` 상태에서만 변경 가능
+            if (car.getRequestStatus() == RequestStatus.PENDING) {
+                car.setRequestStatus(carDTO.getRequestStatus()); // ✅ 상태 변경
+            } else {
+                throw new IllegalStateException("차량 상태 변경이 불가능합니다: " + carDTO.getCarNumber());
+            }
+
+            carRepository.save(car);
+
+            return CarDTO.builder()
+                    .carNumber(car.getCarNumber())
+                    .brn(car.getBrn())
+                    .requestStatus(car.getRequestStatus())
+                    .build();
+        }).toList();
+
+        return updatedCars;
+    }
+
+
+
+
+
+
+
+
+
 }
