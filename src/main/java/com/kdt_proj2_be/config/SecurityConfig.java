@@ -12,6 +12,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -68,20 +71,34 @@ public class SecurityConfig {
 //        return http.build();
 //    }
 //
-     // CORS 해결 코드 래찬님 코드
-    private CorsConfigurationSource corsSource() {
+//     // CORS 수정전
+//    private CorsConfigurationSource corsSource() {
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.addAllowedOriginPattern(CorsConfiguration.ALL);
+//        config.addAllowedMethod(CorsConfiguration.ALL);
+//        config.addAllowedHeader(CorsConfiguration.ALL);
+//        config.addExposedHeader("Authorization");
+//        config.setAllowCredentials(true);   // 쿠키 전송 허용
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//        return source;
+//    }
+
+    // CORS 설정 적용 (프론트엔드에서 접근 가능하도록 수정)
+    @Bean
+    public CorsConfigurationSource corsSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern(CorsConfiguration.ALL);
-        config.addAllowedMethod(CorsConfiguration.ALL);
-        config.addAllowedHeader(CorsConfiguration.ALL);
-        config.addExposedHeader("Authorization");
-        config.setAllowCredentials(true);   // 쿠키 전송 허용
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5000")); // 클라이언트 주소 허용 프론트 3000 플라스트 5000
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 요청 헤더 허용
+        config.addExposedHeader("Authorization"); // 응답 헤더 노출
+        config.setAllowCredentials(true); // 쿠키 전송 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
 
 
 

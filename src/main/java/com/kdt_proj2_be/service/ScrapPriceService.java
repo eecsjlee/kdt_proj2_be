@@ -54,20 +54,44 @@ public class ScrapPriceService {
         return responses;
     }
 
-    // 고철 가격 정보를  DB에 저장
-    public ScrapPrice registerPrice(ScrapPriceRequestDTO requestDTO) {
+//    // 고철 가격 정보를  DB에 저장
+//    public ScrapPrice registerPrice(ScrapPriceRequestDTO requestDTO) {
+//
+//        // ENUM 값을 통해 ScrapType 찾기
+//        ScrapType scrapType = scrapTypeRepository.findByScrapType(requestDTO.getScrapType())
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고철 종류입니다."));
+//
+//        // 엔티티 변환
+//        ScrapPrice scrapPrice = new ScrapPrice();
+//        scrapPrice.setScrapType(scrapType);
+//        scrapPrice.setPrice(requestDTO.getPrice());
+//        scrapPrice.setEffectiveDate(requestDTO.getEffectiveDate());
+//
+//        // 저장 후 반환
+//        return scrapPriceRepository.save(scrapPrice);
+//    }
 
-        // ENUM 값을 통해 ScrapType 찾기
-        ScrapType scrapType = scrapTypeRepository.findByScrapType(requestDTO.getScrapType())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고철 종류입니다."));
+    public void registerPrices(ScrapPriceRequestDTO requestDTO) {
+        // 날짜 변환: LocalDate → LocalDateTime (시간을 00:00:00으로 설정)
+        LocalDateTime effectiveDateTime = requestDTO.getEffectiveDate().atStartOfDay();
 
-        // 엔티티 변환
-        ScrapPrice scrapPrice = new ScrapPrice();
-        scrapPrice.setScrapType(scrapType);
-        scrapPrice.setPrice(requestDTO.getPrice());
-        scrapPrice.setEffectiveDate(requestDTO.getEffectiveDate());
+        // 요청된 모든 고철 가격을 저장
+        for (Map.Entry<ScrapMetalType, BigDecimal> entry : requestDTO.getPrices().entrySet()) {
+            ScrapMetalType scrapTypeEnum = entry.getKey();
+            BigDecimal price = entry.getValue();
 
-        // 저장 후 반환
-        return scrapPriceRepository.save(scrapPrice);
+            // ScrapType 조회
+            ScrapType scrapType = scrapTypeRepository.findByScrapType(scrapTypeEnum)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고철 종류: " + scrapTypeEnum));
+
+            // ScrapPrice 엔티티 생성 및 저장
+            ScrapPrice scrapPrice = new ScrapPrice();
+            scrapPrice.setScrapType(scrapType);
+            scrapPrice.setPrice(price);
+            scrapPrice.setEffectiveDate(effectiveDateTime);
+
+            scrapPriceRepository.save(scrapPrice);
+        }
     }
+
 }

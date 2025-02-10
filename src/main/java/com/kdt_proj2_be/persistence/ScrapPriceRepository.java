@@ -29,4 +29,3 @@ public interface ScrapPriceRepository extends JpaRepository<ScrapPrice, Integer>
     ScrapPrice findPriceByScrapType(ScrapType scrapType);
 
 }
-
