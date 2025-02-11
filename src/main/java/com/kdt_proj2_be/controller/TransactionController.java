@@ -8,7 +8,6 @@ import com.kdt_proj2_be.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -71,44 +70,6 @@ public class TransactionController {
         return ResponseEntity.ok(newTransaction);
     }
 
-
-
-//    // 출차시 등록 수정전
-//    @PutMapping
-//    public Transaction exitTransaction(
-//            @RequestParam(name = "outImg1", required = false) MultipartFile outImg1file,
-//            @RequestParam("exitTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime entryTime) throws IOException {
-//
-////        String carNumber = null;
-//        MultipartFile outImg2file = null;
-//        MultipartFile outImg3file = null;
-//
-//        // 클라이언트에서 받은 outImg1 파일이 있을 경우 Python 서버로 전송하고 응답받은 값을 사용
-//        if (outImg1file != null && !outImg1file.isEmpty()) {
-//            TransactionDTO pythonResponse = pythonImageService.sendImageToPythonServer(outImg1file);
-//            if (pythonResponse != null) {
-//                carNumber = pythonResponse.getCarNumber();
-//                outImg2file = pythonResponse.getInImg2();
-//                outImg3file = pythonResponse.getInImg3();
-//            }
-//            log.info("Python 서버 응답: carNumber={}, outImg2file={}, outImg3file={}", carNumber, outImg2file, outImg3file);
-//        }
-//
-//        // DTO 생성 및 설정
-//        TransactionDTO transactionDTO = TransactionDTO.builder()
-//                .entryTime(entryTime) // 입차 시간 추가
-//                .updatedAt(LocalDateTime.now()) // 업데이트 시간 추가
-//                .outImg1(outImg1file)
-//                .outImg2(outImg2file)
-//                .outImg3(outImg3file)
-//                .carNumber(carNumber)
-//                .build();
-//
-//        // CarService 호출로 업데이트 처리
-//        return transactionService.exitTransaction(transactionDTO);
-//    }
-
-    // 수정 후
     @Operation(summary = "출차 처리", description = "가장 최근 거래 데이터에 업데이트합니다.")
     @PutMapping
     public ResponseEntity<Transaction> exitTransaction(
@@ -148,7 +109,6 @@ public class TransactionController {
         Transaction updatedTransaction = transactionService.exitTransaction(transactionDTO);
         return ResponseEntity.ok(updatedTransaction);
     }
-
 
     @GetMapping
     public ResponseEntity<List<Transaction>> getAllTransactions() {

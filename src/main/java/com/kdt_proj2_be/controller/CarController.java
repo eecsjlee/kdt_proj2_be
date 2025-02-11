@@ -1,23 +1,18 @@
 package com.kdt_proj2_be.controller;
 
-
 import com.kdt_proj2_be.domain.Car;
-import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.domain.RequestStatus;
 import com.kdt_proj2_be.dto.CarDTO;
 import com.kdt_proj2_be.service.CarService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.annotation.MultipartConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -63,7 +58,6 @@ public class CarController {
         return ResponseEntity.ok(carDTO);
     }
 
-
     @PutMapping("/{carNumber}/approved")
     public ResponseEntity<String> approvedCar(@PathVariable String carNumber) throws IOException {
 
@@ -76,14 +70,10 @@ public class CarController {
         return ResponseEntity.ok("car has been approved successfully.");
     }
 
-
-    // ✅ 차량 상태 일괄 변경 (PENDING → APPROVED / REJECTED)
+    // 차량 상태 일괄 변경 (PENDING → APPROVED / REJECTED)
     @PutMapping("/status")
     public ResponseEntity<List<CarDTO>> updateCarStatuses(@RequestBody List<CarDTO> carDTOList) {
         List<CarDTO> updatedCars = carService.updateCarStatuses(carDTOList);
         return ResponseEntity.ok(updatedCars);
     }
-
-
-
 }

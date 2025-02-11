@@ -49,15 +49,6 @@ public class ScrapPriceController {
         return ResponseEntity.ok(response);
     }
 
-//    @Operation(summary = "고철 가격 입력", description = "고철 가격을 입력합니다.")
-//    @PostMapping("/prices") // POST 요청
-//    public ResponseEntity<ScrapPrice> registerPrice(@RequestBody ScrapPriceRequestDTO requestDTO) {
-//
-//        ScrapPrice savedPrice = scrapPriceService.registerPrice(requestDTO); // DTO를 전달하여 변환 및 저장
-//
-//        return ResponseEntity.ok(savedPrice);
-//    }
-
     @Operation(summary = "고철 가격 입력", description = "여러 고철 가격을 한 번에 입력합니다.")
     @PostMapping("/prices")
     public ResponseEntity<String> registerPrices(@RequestBody ScrapPriceRequestDTO requestDTO) {

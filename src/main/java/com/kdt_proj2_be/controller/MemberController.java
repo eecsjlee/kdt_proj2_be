@@ -23,29 +23,6 @@ public class MemberController {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-
-    // 유저가 입력한 아이디 비밀번호 보여지는 이름을 DB에 저장
-    // DI SecurityConfig에 암호화시키는 함수 passwordEncoder.encode()
-//    @PostMapping("/member")
-//    String addMember(String username, String password, String displayname) {
-//        Member member = new Member();
-//        member.setUsername(username);
-//        var hash = passwordEncoder.encode(password);
-//        member.setPassword(hash);
-//        member.setDisplayname(displayname);
-//        member.setRole(Role.ROLE_MEMBER);
-//
-//        memberRepository.save(member);
-//        return "redirect:/list"; //회원 등록 후 list로 페이지 리다이렉트함
-//    }
-
-    // 회원 가입 데이터를 받아서 MemberService로 보냄
-
-//    @PostMapping
-//    public ResponseEntity<Member> registerMember(@RequestBody Member member) {
-//        return ResponseEntity.ok(memberService.registerMember(member));
-//    }
-
     @PostMapping
     @Operation(
             summary = "회원 가입",
