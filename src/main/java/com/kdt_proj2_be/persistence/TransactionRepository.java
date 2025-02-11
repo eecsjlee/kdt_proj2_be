@@ -18,4 +18,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Optional<Transaction> findFirstByCarNumberOrderByEntryTimeDesc(String carNumber);
 
+    Optional<Transaction> findFirstByCarNumberAndExitTimeIsNullOrderByEntryTimeDesc(String carNumber);
 }

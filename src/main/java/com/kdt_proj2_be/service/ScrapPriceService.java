@@ -23,11 +23,6 @@ public class ScrapPriceService {
     private final ScrapPriceRepository scrapPriceRepository;
     private final ScrapTypeRepository scrapTypeRepository; // ScrapType 조회를 위한 Repository
 
-//    public ScrapPriceService(ScrapPriceRepository scrapPriceRepository, ScrapTypeRepository scrapTypeRepository) {
-//        this.scrapPriceRepository = scrapPriceRepository;
-//        this.scrapTypeRepository = scrapTypeRepository;
-//    } @RequiredArgsConstructor 추가하고 삭제
-
     public List<ScrapPriceResponseDTO> getScrapPriceList() {
 
         LocalDateTime endDate = LocalDateTime.now();
@@ -56,23 +51,6 @@ public class ScrapPriceService {
         return responses;
     }
 
-//    // 고철 가격 정보를  DB에 저장
-//    public ScrapPrice registerPrice(ScrapPriceRequestDTO requestDTO) {
-//
-//        // ENUM 값을 통해 ScrapType 찾기
-//        ScrapType scrapType = scrapTypeRepository.findByScrapType(requestDTO.getScrapType())
-//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 고철 종류입니다."));
-//
-//        // 엔티티 변환
-//        ScrapPrice scrapPrice = new ScrapPrice();
-//        scrapPrice.setScrapType(scrapType);
-//        scrapPrice.setPrice(requestDTO.getPrice());
-//        scrapPrice.setEffectiveDate(requestDTO.getEffectiveDate());
-//
-//        // 저장 후 반환
-//        return scrapPriceRepository.save(scrapPrice);
-//    }
-
     public void registerPrices(ScrapPriceRequestDTO requestDTO) {
         // 날짜 변환: LocalDate → LocalDateTime (시간을 00:00:00으로 설정)
         LocalDateTime effectiveDateTime = requestDTO.getEffectiveDate().atStartOfDay();
@@ -95,5 +73,4 @@ public class ScrapPriceService {
             scrapPriceRepository.save(scrapPrice);
         }
     }
-
 }

@@ -25,6 +25,7 @@ Spring Boot version '3.4.1'
   
   
 ## 프로젝트 기간
+  
 2025-01-13 ~ 2025-02-20  
   
 ## 팀 구성
@@ -36,3 +37,9 @@ Spring Boot version '3.4.1'
   
 ## 메모
   
+
+## 트러블 슈팅
+  
+### ManyToOne + @OneToMany 양방향 관계 순환 참조 문제
+  
+Jackson을 사용하여 JSON 직렬화를 수행할 때, 무한 루프가 발생할 가능성이 있음.  
