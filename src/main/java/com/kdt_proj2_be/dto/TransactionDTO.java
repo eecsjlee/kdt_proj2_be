@@ -1,5 +1,6 @@
 package com.kdt_proj2_be.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kdt_proj2_be.domain.ScrapMetalType;
 import com.kdt_proj2_be.domain.TransactionStatus;
 import lombok.Builder;
@@ -33,8 +34,14 @@ public class TransactionDTO {
     private BigDecimal exitWeight;
     private BigDecimal totalWeight;
     private BigDecimal purchaseAmount;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime entryTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime exitTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
 }

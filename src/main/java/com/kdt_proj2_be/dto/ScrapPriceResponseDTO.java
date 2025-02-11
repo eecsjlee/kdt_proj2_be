@@ -1,5 +1,6 @@
 package com.kdt_proj2_be.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,8 @@ import java.util.Map;
 @Getter @Setter
 @AllArgsConstructor
 public class ScrapPriceResponseDTO {
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDate effectiveDate;
 
     /**

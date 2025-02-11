@@ -1,5 +1,6 @@
 package com.kdt_proj2_be.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kdt_proj2_be.domain.Role;
 import lombok.*;
 
@@ -18,7 +19,11 @@ public class MemberDTO {
     private String contact; // 연락처
     private Role role;
     private boolean enabled;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
 

@@ -3,6 +3,7 @@ package com.kdt_proj2_be.controller;
 import com.kdt_proj2_be.domain.ScrapMetalType;
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.TransactionDTO;
+import com.kdt_proj2_be.dto.TransactionResponseDTO;
 import com.kdt_proj2_be.service.PythonImageService;
 import com.kdt_proj2_be.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -111,7 +112,7 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Transaction>> getAllTransactions() {
+    public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions() {
         return ResponseEntity.ok(transactionService.getAllTransactions());
     }
 }

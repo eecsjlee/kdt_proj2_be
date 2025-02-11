@@ -5,6 +5,7 @@ import com.kdt_proj2_be.domain.ScrapPrice;
 import com.kdt_proj2_be.domain.ScrapType;
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.TransactionDTO;
+import com.kdt_proj2_be.dto.TransactionResponseDTO;
 import com.kdt_proj2_be.handler.MyWebSocketHandler;
 import com.kdt_proj2_be.persistence.MissingRecordRepository;
 import com.kdt_proj2_be.persistence.ScrapPriceRepository;
@@ -192,9 +193,16 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    // 모든 거래 조회
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll(); // 모든 거래 데이터 조회
+    // 모든 거래 목록을 조회하는 서비스 메서드
+    public List<TransactionResponseDTO> getAllTransactions() {
+
+        // 데이터베이스
+        List<Transaction> transactions = transactionRepository.findAll();
+
+        // Entity → DTO 변환 후 반환
+        return transactions.stream()
+                .map(TransactionResponseDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
 
