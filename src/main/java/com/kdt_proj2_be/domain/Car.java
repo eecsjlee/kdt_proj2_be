@@ -15,12 +15,12 @@ public class Car {
     @Column(name = "car_number")
     private String carNumber;
 
-    @Column
-    private String brn;
+//    @Column
+//    private String brn;
 
-//    @ManyToOne
-//    @JoinColumn(name = "brn", nullable = false) //외래 키 매핑
-//    private Member member;
+    @ManyToOne
+    @JoinColumn(name = "brn", nullable = false) //외래 키 매핑
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default

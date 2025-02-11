@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.kdt_proj2_be.domain.Car;
+import com.kdt_proj2_be.domain.Member;
 import com.kdt_proj2_be.domain.RequestStatus;
 import com.kdt_proj2_be.dto.CarDTO;
 import com.kdt_proj2_be.persistence.CarRepository;
@@ -30,17 +31,17 @@ public class CarService {
 
     // 차량 등록
     public Car registerCar(CarDTO carDTO) throws IOException {
+
         // 이미지 업로드
         String imagePath = imageUpload(carDTO);
 
-        // member 조회
-//        Member member = memberRepository.findByBrn(brn)
-//                .orElseThrow(() -> new RuntimeException("Member not found with BRN: " + carDTO.getCarNumber()));
-
+        // Member 조회 (brn을 기반으로 검색)
+        Member member = memberRepository.findByBrn(carDTO.getBrn())
+                .orElseThrow(() -> new RuntimeException("해당 사업자 번호(brn)를 찾을 수 없습니다: " + carDTO.getBrn()));
         // Car 엔티티 생성 및 저장
         Car car = Car.builder()
                 .carNumber(carDTO.getCarNumber())
-                .brn(carDTO.getBrn())
+                .member(member)
                 .requestStatus(carDTO.getRequestStatus())
                 .image(imagePath) // 이미지 경로 설정
                 .build();
@@ -155,12 +156,12 @@ public class CarService {
 
 
 
-    // ✅ 모든 차량을 `CarDTO` 리스트로 변환하여 반환
+    // 모든 차량을 `CarDTO` 리스트로 변환하여 반환
     public List<CarDTO> getAllCars() {
         return carRepository.findAll().stream().map(car ->
                 CarDTO.builder()
                         .carNumber(car.getCarNumber())
-                        .brn(car.getBrn())
+                        .brn(car.getMember().getBrn())
                         .requestStatus(car.getRequestStatus())
                         .build()
         ).toList();
@@ -173,7 +174,7 @@ public class CarService {
 
         return CarDTO.builder()
                 .carNumber(car.getCarNumber())
-                .brn(car.getBrn())
+                .brn(car.getMember().getBrn())
                 .requestStatus(car.getRequestStatus())
                 .build();
     }
@@ -181,7 +182,7 @@ public class CarService {
 
 
 
-    // ✅ 여러 차량 상태 변경
+    // 여러 차량 상태 변경
     public List<CarDTO> updateCarStatuses(List<CarDTO> carDTOList) {
         List<CarDTO> updatedCars = carDTOList.stream().map(carDTO -> {
             Car car = carRepository.findByCarNumber(carDTO.getCarNumber())
@@ -198,7 +199,7 @@ public class CarService {
 
             return CarDTO.builder()
                     .carNumber(car.getCarNumber())
-                    .brn(car.getBrn())
+                    .brn(car.getMember().getBrn())
                     .requestStatus(car.getRequestStatus())
                     .build();
         }).toList();
