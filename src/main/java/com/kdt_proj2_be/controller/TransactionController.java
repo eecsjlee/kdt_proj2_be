@@ -114,7 +114,7 @@ public class TransactionController {
     public ResponseEntity<Transaction> exitTransaction(
             @RequestParam(name = "outImg1", required = false) MultipartFile outImg1file,
             @RequestParam("exitTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime exitTime,
-            @RequestParam("exitWeight") BigDecimal exitWeight) throws IOException {
+            @RequestParam("exitWeight") BigDecimal exitWeight) throws Exception {
 
         String carNumber = null;
         MultipartFile outImg2file = null;

@@ -1,5 +1,6 @@
 package com.kdt_proj2_be.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,5 +25,7 @@ public class ScrapPrice {
     private ScrapType scrapType;
 
     private BigDecimal price;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime effectiveDate;
 }

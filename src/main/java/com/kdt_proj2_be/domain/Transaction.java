@@ -1,5 +1,6 @@
 package com.kdt_proj2_be.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -43,12 +44,15 @@ public class Transaction {
 
     private BigDecimal totalWeight;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "entry_time", nullable = false)
     private LocalDateTime entryTime; // 입차 시간
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "exit_time")
     private LocalDateTime exitTime; // 출차 시간
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 

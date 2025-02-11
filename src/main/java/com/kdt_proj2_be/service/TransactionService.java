@@ -4,6 +4,7 @@ import com.kdt_proj2_be.domain.ScrapPrice;
 import com.kdt_proj2_be.domain.ScrapType;
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.TransactionDTO;
+import com.kdt_proj2_be.handler.MyWebSocketHandler;
 import com.kdt_proj2_be.persistence.ScrapPriceRepository;
 import com.kdt_proj2_be.persistence.ScrapTypeRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
@@ -31,9 +32,9 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final ScrapPriceRepository scrapPriceRepository;
     private final ScrapTypeRepository scrapTypeRepository;
+    private final MyWebSocketHandler webSocketHandler;
 
-
-    // Image upload method
+    // 이미지 업로드 메서드
     private String uploadImage(MultipartFile file, String prefix) throws IOException {
         if (file == null || file.isEmpty()) {
             return null;
@@ -55,7 +56,7 @@ public class TransactionService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String newFileName = prefix + "_" + sdf.format(new Date()) + "." + ext;
 
-        // Save the file
+        // 파일 저장
         file.transferTo(new File(absolutePath + path + File.separator + newFileName));
         return newFileName;
     }
@@ -85,58 +86,52 @@ public class TransactionService {
         transaction.setInImg2(inImg2);
         transaction.setInImg3(inImg3);
 
+        // WebSocket을 통해 전체 트랜잭션 리스트 전송 (모든 클라이언트 업데이트)
+        try {
+            webSocketHandler.sendTransactionList();
+        } catch (Exception e) {
+            log.error("WebSocket 전송 중 오류 발생", e);
+        }
+
         return transactionRepository.save(transaction);
     }
 
     // 출차시 거래정보 등록
-    public Transaction exitTransaction(TransactionDTO transactionDTO) throws IOException {
+    public Transaction exitTransaction(TransactionDTO transactionDTO) throws Exception {
         String carNumber = transactionDTO.getCarNumber();
 
-        // 🚗 출차되지 않은 최신 거래 조회 (최근 entryTime 기준)
+        // 출차되지 않은 최신 거래 조회 (최근 entryTime 기준)
         Transaction transaction = transactionRepository.findFirstByCarNumberOrderByEntryTimeDesc(carNumber)
                 .orElseThrow(() -> new IllegalArgumentException("해당 차량의 최근 입차 기록이 없습니다."));
 
-        // 📸 출차 이미지 업로드
+
+        // 출차 이미지 업로드
         String outImg1 = uploadImage(transactionDTO.getOutImg1(), "outImg1");
         String outImg2 = uploadImage(transactionDTO.getOutImg2(), "outImg2");
         String outImg3 = uploadImage(transactionDTO.getOutImg3(), "outImg3");
-
-//        // 출차 정보 업데이트
-//        transaction.setOutImg1(outImg1);
-//        transaction.setOutImg2(outImg2);
-//        transaction.setOutImg3(outImg3);
-//        transaction.setExitTime(transactionDTO.getExitTime());
-//        transaction.setExitWeight(transactionDTO.getExitWeight());
-//        transaction.setUpdatedAt(LocalDateTime.now());
-//
-//        // 저장 후 반환
-//        return transactionRepository.save(transaction);
-
-
 
         // entryWeight와 exitWeight를 활용한 totalWeight 계산
         BigDecimal entryWeight = transaction.getEntryWeight();
         BigDecimal exitWeight = transactionDTO.getExitWeight();
 
-        // 🚨 `entryWeight` 또는 `exitWeight`가 `null`이면 예외 발생
+        // `entryWeight` 또는 `exitWeight`가 `null`이면 예외 발생
         if (entryWeight == null || exitWeight == null) {
             throw new IllegalArgumentException("입차 중량(entryWeight) 또는 출차 중량(exitWeight)이 null입니다.");
         }
 
-        // ✅ `exitWeight`가 `entryWeight`보다 크면 예외 발생 (정상적인 출차 데이터가 아님)
+        // exitWeight가 entryWeight보다 크면 예외 발생 (정상적인 출차 데이터가 아님)
         if (exitWeight.compareTo(entryWeight) > 0) {
             throw new IllegalArgumentException("출차 중량이 입차 중량보다 클 수 없습니다.");
         }
 
-        BigDecimal totalWeight = entryWeight.subtract(exitWeight); // ✅ 총 중량 계산
+        BigDecimal totalWeight = entryWeight.subtract(exitWeight); // 총 중량 계산
 
-        // 💰 ScrapType을 이용하여 `purchaseAmount` 계산
+        // ScrapType을 이용하여 purchaseAmount 계산
         ScrapType scrapType = transaction.getScrapType();
 
-        // ✅ 입차 시점(`entryTime`) 기준으로 해당 고철의 가격 조회
+        // 입차 시점(`entryTime`) 기준으로 해당 고철의 가격 조회
         ScrapPrice scrapPrice = scrapPriceRepository.findLatestPriceBeforeEntryTime(scrapType, transaction.getEntryTime())
                 .orElseThrow(() -> new IllegalArgumentException("입차 시점의 해당 고철 가격 정보가 없습니다."));
-
 
 
         BigDecimal purchaseAmount = totalWeight.multiply(scrapPrice.getPrice()); // 구매 금액 계산
@@ -151,33 +146,22 @@ public class TransactionService {
         transaction.setPurchaseAmount(purchaseAmount);
         transaction.setUpdatedAt(LocalDateTime.now());
 
+        // WebSocket을 통해 전체 트랜잭션 리스트 전송 (모든 클라이언트 업데이트)
+        try {
+            webSocketHandler.sendTransactionList();
+        } catch (Exception e) {
+            log.error("WebSocket 전송 중 오류 발생", e);
+        }
+
         // 저장 후 반환
         return transactionRepository.save(transaction);
     }
-
-
-
 
     // 모든 거래 조회
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll(); // 모든 거래 데이터 조회
     }
 
-//    public Transaction putExitDate(String carNumber, BigDecimal exitWeight) {
-//        // 출차되지 않은 가장 최근의 거래 가져오기
-//        Optional<Transaction> transOpt = transactionRepository.findLatestUnExitedEntryByCarNumber(carNumber);
-//
-//        if (transOpt.isEmpty()) {
-//            throw new IllegalStateException("해당 차량의 진행 중인 거래가 없습니다.");
-//        }
-//
-//        Transaction trans = transOpt.get();
-//        trans.setExitWeight(exitWeight);
-//        trans.setExitDate(LocalDateTime.now());
-//
-//        // 업데이트된 트랜잭션 저장
-//        return transactionRepository.save(trans);
-//    }
 
     // 고철 중량, 거래 총액 구하는 기능
     public Transaction getScrapTotalWeight(BigDecimal exitWeight, String carNumber, ScrapType scrapType) {

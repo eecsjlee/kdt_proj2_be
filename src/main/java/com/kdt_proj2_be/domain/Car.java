@@ -30,5 +30,4 @@ public class Car {
     @Column(name = "image")
     private String image; // 이미지 파일 URL
 
-
 }
