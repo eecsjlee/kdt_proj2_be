@@ -18,7 +18,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class ScrapPriceResponseDTO {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDate effectiveDate;
 
     /**

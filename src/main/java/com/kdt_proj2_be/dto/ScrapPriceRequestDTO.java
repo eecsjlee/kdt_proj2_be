@@ -16,7 +16,6 @@ import java.util.Map;
 @NoArgsConstructor
 public class ScrapPriceRequestDTO {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate effectiveDate; // 날짜만 입력받고, 시간은 00:00:00으로 처리
 
     @JsonDeserialize(keyUsing = ScrapMetalTypeDeserializer.class) // ✅ ENUM 키 변환 추가
