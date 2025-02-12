@@ -1,15 +1,16 @@
 package com.kdt_proj2_be.config;
 
-//import com.kdt_proj2_be.handler.MyWebSocketHandler;
-//import com.kdt_proj2_be.persistence.TransactionRepository;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.web.socket.config.annotation.EnableWebSocket;
-//import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-//import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-//
-//@Configuration
-//@EnableWebSocket
+import com.kdt_proj2_be.handler.MyWebSocketHandler;
+import com.kdt_proj2_be.persistence.TransactionRepository;
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+
+// 오류 코드
 //public class WebSocketConfig implements WebSocketConfigurer {
 //
 //    private final TransactionRepository transactionRepository;
@@ -18,7 +19,7 @@ package com.kdt_proj2_be.config;
 //        this.transactionRepository = transactionRepository;
 //    }
 //
-//    @Bean // ✅ Bean으로 등록하여 Spring에서 관리하도록 함
+//    @Bean // Bean으로 등록하여 Spring에서 관리하도록 함
 //    public MyWebSocketHandler myWebSocketHandler() {
 //        return new MyWebSocketHandler(transactionRepository);
 //    }
@@ -29,16 +30,6 @@ package com.kdt_proj2_be.config;
 //                .setAllowedOrigins("*"); // CORS 설정 (허용 도메인)
 //    }
 //}
-
-import com.kdt_proj2_be.handler.MyWebSocketHandler;
-import com.kdt_proj2_be.persistence.TransactionRepository;
-import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
-import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 @Configuration
 @EnableWebSocket
