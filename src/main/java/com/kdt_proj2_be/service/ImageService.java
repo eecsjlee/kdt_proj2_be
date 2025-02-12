@@ -2,9 +2,11 @@ package com.kdt_proj2_be.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.kdt_proj2_be.dto.TransactionDTO;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.mock.web.MockMultipartFile;
+        import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.core.io.ByteArrayResource;
@@ -12,12 +14,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Date;
 
 @Slf4j
-@Service
-public class PythonImageService {
+@Service @Getter @Setter
+public class ImageService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final String pythonServerUrl = "http://10.125.121.214:5000/process_image"; // Python 서버 URL
@@ -88,7 +93,7 @@ public class PythonImageService {
                     log.warn("응답에 inImg3 정보가 없습니다.");
                 }
 
-            return transactionDTO;
+                return transactionDTO;
             }
             else {
                 log.warn("응답 본문이 null입니다.");
@@ -98,5 +103,34 @@ public class PythonImageService {
             log.error("Python 서버 에러 발생: {}", response.getStatusCode());
         }
         return null;
+    }
+
+    /**
+     * 이미지 파일을 지정된 경로에 업로드하고 새 파일명을 반환하는 메서드
+     */
+    public String uploadImage(MultipartFile file, String prefix) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
+        // 파일의 절대 경로 가져오기
+        String absolutePath = new File("").getAbsolutePath() + File.separator;
+        String path = "src/main/resources/static/images";
+        File imgDir = new File(path);
+        if (!imgDir.exists()) {
+            imgDir.mkdirs();
+        }
+
+        String originalFileName = file.getOriginalFilename();
+        int lastIndex = originalFileName.lastIndexOf('.') + 1;
+        String ext = originalFileName.substring(lastIndex);
+
+        // 시간 기반으로 파일 중복 회피
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String newFileName = sdf.format(new Date()) + "_" + prefix + "." + ext;
+
+        // 파일 저장
+        file.transferTo(new File(absolutePath + path + File.separator + newFileName));
+        return newFileName;
     }
 }
