@@ -56,6 +56,6 @@ public class ScrapPriceController {
         // 서비스 계층에서 여러 고철 가격을 처리하도록 수정
         scrapPriceService.registerPrices(requestDTO);
 
-        return ResponseEntity.ok("Scrap prices successfully saved!");
+        return ResponseEntity.ok("고철 가격이 정상적으로 등록되었습니다.");
     }
 }
