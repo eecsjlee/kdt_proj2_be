@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -26,6 +28,13 @@ public class EntryExitStatusDTO {
     private String outImg1;
     private String outImg2;
     private String outImg3;
+
+    private BigDecimal entryWeight;
+    private BigDecimal exitWeight;
+    private BigDecimal totalWeight;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
 
 
     public static EntryExitStatusDTO fromEntity(Transaction transaction) {
@@ -67,7 +76,11 @@ public class EntryExitStatusDTO {
                 "/images/" + transaction.getInImg3(),
                 "/images/" + transaction.getOutImg1(),
                 "/images/" + transaction.getOutImg2(),
-                "/images/" + transaction.getOutImg3()
+                "/images/" + transaction.getOutImg3(),
+                transaction.getEntryWeight(),   // 추가된 속성
+                transaction.getExitWeight(),    // 추가된 속성
+                transaction.getTotalWeight(),   // 추가된 속성
+                transaction.getUpdatedAt()      // 추가된 속성
         );
 
     }
