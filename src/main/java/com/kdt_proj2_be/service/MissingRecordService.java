@@ -14,7 +14,7 @@ public class MissingRecordService {
 
     private final MissingRecordRepository missingRecordRepository;
 
-    // ✅ 모든 MissingRecord 데이터 조회
+    // 모든 MissingRecord 데이터 조회
     public List<MissingRecordDTO> getAllMissingRecords() {
         return missingRecordRepository.findAll().stream().map(missingRecord ->
                 new MissingRecordDTO(

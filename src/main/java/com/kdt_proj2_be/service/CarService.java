@@ -156,7 +156,7 @@ public class CarService {
 
 
 
-    // 모든 차량을 `CarDTO` 리스트로 변환하여 반환
+    // 모든 차량을 CarDTO 리스트로 변환하여 반환
     public List<CarDTO> getAllCars() {
         return carRepository.findAll().stream().map(car ->
                 CarDTO.builder()
@@ -188,7 +188,7 @@ public class CarService {
             Car car = carRepository.findByCarNumber(carDTO.getCarNumber())
                     .orElseThrow(() -> new RuntimeException("차량 정보를 찾을 수 없습니다: " + carDTO.getCarNumber()));
 
-            // 🚗 `PENDING` 상태에서만 변경 가능
+            // PENDING 상태에서만 변경 가능
             if (car.getRequestStatus() == RequestStatus.PENDING) {
                 car.setRequestStatus(carDTO.getRequestStatus()); // ✅ 상태 변경
             } else {
