@@ -19,7 +19,7 @@ public class CarDTO {
     @JsonIgnore
     private MultipartFile image; // 이미지 업로드 필드
 
-    // `Car` 엔티티를 `CarDTO`로 변환하는 정적 메서드
+    // Car 엔티티를 CarDTO로 변환하는 정적 메서드
     public static CarDTO fromEntity(com.kdt_proj2_be.domain.Car car) {
         return CarDTO.builder()
                 .carNumber(car.getCarNumber())
@@ -27,6 +27,4 @@ public class CarDTO {
                 .requestStatus(car.getRequestStatus())
                 .build();
     }
-
-
 }
