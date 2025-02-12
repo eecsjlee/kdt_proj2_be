@@ -21,6 +21,7 @@ public class HomeViewDTO {
     private String scrapType;
     private BigDecimal totalWeight;
     private BigDecimal purchaseAmount;
+    private BigDecimal price;
 
 //    @JsonSerialize(using = LocalDateTimeSerializer.class) // JSON 변환 시 포맷 적용
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

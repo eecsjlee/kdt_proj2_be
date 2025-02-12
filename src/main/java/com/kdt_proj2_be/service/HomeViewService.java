@@ -28,6 +28,7 @@ public class HomeViewService {
                 (String) row[4], // scrap_type
                 (BigDecimal) row[5], // total_weight
                 (BigDecimal) row[6], // purchase_amount
+                (BigDecimal) row[9], // price
                 convertToLocalDateTime(row[7]), // entry_time
                 convertToLocalDateTime (row[8]) // exit_time
         )).collect(Collectors.toList());

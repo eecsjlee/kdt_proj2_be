@@ -37,9 +37,9 @@ public class TransactionResponseDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
     private BigDecimal purchaseAmount;
-    private String scrapType; // ✅ scrapType을 문자열로 변환
+    private String scrapType; // scrapType을 문자열로 변환
 
-    // ✅ Entity → DTO 변환 메서드 추가
+    // Entity → DTO 변환 메서드 추가
     public static TransactionResponseDTO fromEntity(Transaction transaction) {
         return new TransactionResponseDTO(
                 transaction.getTransaction_id(),
@@ -50,7 +50,7 @@ public class TransactionResponseDTO {
                 transaction.getOutImg1(),
                 transaction.getOutImg2(),
                 transaction.getOutImg3(),
-                transaction.getTransactionStatus().name(), // ✅ Enum → String 변환
+                transaction.getTransactionStatus().name(), // ENUM → String 변환
                 transaction.getEntryWeight(),
                 transaction.getExitWeight(),
                 transaction.getTotalWeight(),
@@ -58,7 +58,7 @@ public class TransactionResponseDTO {
                 transaction.getExitTime(),
                 transaction.getUpdatedAt(),
                 transaction.getPurchaseAmount(),
-                transaction.getScrapType().getScrapType().name() // ✅ scrapType을 문자열로 변환
+                transaction.getScrapType().getScrapType().name() // scrapType을 문자열로 변환
         );
     }
 }
