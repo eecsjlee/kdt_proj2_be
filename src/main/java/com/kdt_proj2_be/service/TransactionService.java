@@ -93,7 +93,7 @@ public class TransactionService {
 
         // WebSocket을 통해 전체 트랜잭션 리스트 전송 (모든 클라이언트 업데이트)
         try {
-            webSocketHandler.sendTransactionList();
+            webSocketHandler.sendTransactions();
         } catch (Exception e) {
             log.error("WebSocket 전송 중 오류 발생", e);
         }
@@ -184,7 +184,7 @@ public class TransactionService {
 
         // WebSocket을 통해 전체 트랜잭션 리스트 전송 (모든 클라이언트 업데이트)
         try {
-            webSocketHandler.sendTransactionList();
+            webSocketHandler.sendTransactions();
         } catch (Exception e) {
             log.error("WebSocket 전송 중 오류 발생", e);
         }
