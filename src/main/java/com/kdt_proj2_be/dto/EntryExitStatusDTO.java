@@ -42,17 +42,33 @@ public class EntryExitStatusDTO {
 //                transaction.getOutImg2(),
 //                transaction.getOutImg3()
 //        );
+
+            // Base64 방식
+//        return new EntryExitStatusDTO(
+//                transaction.getTransactionStatus().name(),  // ENUM → String 변환
+//                transaction.getCarNumber(),
+//                transaction.getEntryTime(),
+//                transaction.getExitTime(),
+//                ImageUtil.encodeImageToBase64(transaction.getInImg1()), // Base64 변환
+//                ImageUtil.encodeImageToBase64(transaction.getInImg2()),
+//                ImageUtil.encodeImageToBase64(transaction.getInImg3()),
+//                ImageUtil.encodeImageToBase64(transaction.getOutImg1()),
+//                ImageUtil.encodeImageToBase64(transaction.getOutImg2()),
+//                ImageUtil.encodeImageToBase64(transaction.getOutImg3())
+//        );
+
         return new EntryExitStatusDTO(
-                transaction.getTransactionStatus().name(),  // ENUM → String 변환
+                transaction.getTransactionStatus().name(),
                 transaction.getCarNumber(),
                 transaction.getEntryTime(),
                 transaction.getExitTime(),
-                ImageUtil.encodeImageToBase64(transaction.getInImg1()), // Base64 변환
-                ImageUtil.encodeImageToBase64(transaction.getInImg2()),
-                ImageUtil.encodeImageToBase64(transaction.getInImg3()),
-                ImageUtil.encodeImageToBase64(transaction.getOutImg1()),
-                ImageUtil.encodeImageToBase64(transaction.getOutImg2()),
-                ImageUtil.encodeImageToBase64(transaction.getOutImg3())
+                "/images/" + transaction.getInImg1(),  // URL 경로로 변환
+                "/images/" + transaction.getInImg2(),
+                "/images/" + transaction.getInImg3(),
+                "/images/" + transaction.getOutImg1(),
+                "/images/" + transaction.getOutImg2(),
+                "/images/" + transaction.getOutImg3()
         );
+
     }
 }
