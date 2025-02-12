@@ -5,6 +5,7 @@ import com.kdt_proj2_be.dto.TransactionDTO;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
         import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
@@ -25,7 +26,11 @@ import java.util.Date;
 public class ImageService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String pythonServerUrl = "http://10.125.121.214:5000/process_image"; // Python 서버 URL
+
+    // pythonServerUrl 값을 application.yml에서 주입받음
+    @Value("${python.server-url}")
+    private String pythonServerUrl; // Python 서버 URL
+
 
     /**
      * Base64 데이터를 MultipartFile로 변환하는 메서드
