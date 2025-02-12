@@ -40,11 +40,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     // WebSocket을 통해 List<Transaction> JSON으로 전송
     public void sendTransactions() throws Exception {
         List<Transaction> transactionList = transactionRepository.findAll(); // DB에서 모든 트랜잭션 가져오기
-        String jsonList = objectMapper.writeValueAsString(transactionList); // JSON 변환
+        String transactionsPayload = objectMapper.writeValueAsString(transactionList); // JSON 변환
 
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
-                session.sendMessage(new TextMessage(jsonList)); // JSON List 전송
+                session.sendMessage(new TextMessage(transactionsPayload)); // JSON List 전송
             }
         }
     }
@@ -58,8 +58,8 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 .map(EntryExitStatusDTO::fromEntity)
                 .collect(Collectors.toList());
 
-        String jsonList = objectMapper.writeValueAsString(entryExitStatus);
-        session.sendMessage(new TextMessage(jsonList));
+        String entryExitStatusPayload = objectMapper.writeValueAsString(entryExitStatus);
+        session.sendMessage(new TextMessage(entryExitStatusPayload));
     }
 
 
@@ -90,9 +90,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     // 클라이언트에게 트랜잭션 리스트 전송
     private void sendTransactionList(WebSocketSession session) throws Exception {
         List<Transaction> transactionList = transactionRepository.findAll();
-        String jsonList = objectMapper.writeValueAsString(transactionList);
+        String transactionsPayload = objectMapper.writeValueAsString(transactionList);
 
-        session.sendMessage(new TextMessage(jsonList));
+        session.sendMessage(new TextMessage(transactionsPayload));
     }
 
 
