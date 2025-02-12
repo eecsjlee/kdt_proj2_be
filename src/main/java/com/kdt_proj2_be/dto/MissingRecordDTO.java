@@ -23,4 +23,8 @@ public class MissingRecordDTO {
     private LocalDateTime exitTime;
 
     private BigDecimal exitWeight;
+
+    private String outImg1;
+    private String outImg2;
+    private String outImg3;
 }

@@ -28,4 +28,9 @@ public class MissingRecord {
 
     @Column(name = "checked_at", nullable = false)
     private LocalDateTime checkedAt; // 언제 확인되었는지 기록
+
+    private String outImg1; // 이미지 파일
+    private String outImg2; // 이미지 파일
+    private String outImg3; // 이미지 파일
+
 }

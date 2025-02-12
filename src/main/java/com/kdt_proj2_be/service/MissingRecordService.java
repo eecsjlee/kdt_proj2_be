@@ -21,7 +21,10 @@ public class MissingRecordService {
                         missingRecord.getCarNumber(),
                         missingRecord.getCheckedAt(),
                         missingRecord.getExitTime(),
-                        missingRecord.getExitWeight()
+                        missingRecord.getExitWeight(),
+                        missingRecord.getOutImg1(),
+                        missingRecord.getOutImg2(),
+                        missingRecord.getOutImg3()
                 )
         ).collect(Collectors.toList());
     }
@@ -33,7 +36,10 @@ public class MissingRecordService {
                         missingRecord.getCarNumber(),
                         missingRecord.getCheckedAt(),
                         missingRecord.getExitTime(),
-                        missingRecord.getExitWeight()
+                        missingRecord.getExitWeight(),
+                        missingRecord.getOutImg1(),
+                        missingRecord.getOutImg2(),
+                        missingRecord.getOutImg3()
                 ))
                 .orElseThrow(() -> new RuntimeException("해당 차량의 MissingRecord 기록을 찾을 수 없습니다: " + carNumber));
     }

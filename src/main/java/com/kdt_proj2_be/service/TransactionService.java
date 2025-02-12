@@ -110,7 +110,7 @@ public class TransactionService {
 //        // 출차되지 않은 최신 거래 조회 (최근 entryTime 기준)
 //        Transaction transaction = transactionRepository.findFirstByCarNumberOrderByEntryTimeDesc(carNumber)
 //                .orElseThrow(() -> {
-//                    log.warn("🚨 입차 기록이 없는 차량 발견: {}", carNumber);
+//                    log.warn("입차 기록이 없는 차량 발견: {}", carNumber);
 //                    missingRecordRepository.save(
 //                            missingRecordRepository.builder()
 //                                    .carNumber(carNumber)
@@ -123,23 +123,33 @@ public class TransactionService {
         // 출차되지 않은 차량 조회 (entryTime이 있고 exitTime이 null)
         Optional<Transaction> transactionOpt = transactionRepository.findFirstByCarNumberAndExitTimeIsNullOrderByEntryTimeDesc(carNumber);
 
-        Transaction transaction = transactionRepository.findFirstByCarNumberOrderByEntryTimeDesc(carNumber)
-                .orElseGet(() -> {
-                    log.warn("🚨 입차 기록이 없는 차량 발견: {}", carNumber);
+        // 입차 기록이 없는 경우 `MissingRecord`에 저장
+        if (transactionOpt.isEmpty()) {
+            log.warn("🚨 입차 기록이 없는 차량 발견: {}", carNumber);
 
-                    // `MissingRecord`에 저장
-                    missingRecordRepository.save(
-                            MissingRecord.builder()
-                                    .carNumber(carNumber)
-                                        .exitWeight(exitWeight)
-                                        .exitTime(exitTime)
-                                    .checkedAt(LocalDateTime.now())
-                                    .build()
-                    );
+            // 출차 이미지 업로드 (Base64 대신 URL 사용)
+            String outImg1 = uploadImage(transactionDTO.getOutImg1(), "outImg1");
+            String outImg2 = uploadImage(transactionDTO.getOutImg2(), "outImg2");
+            String outImg3 = uploadImage(transactionDTO.getOutImg3(), "outImg3");
 
-                    throw new IllegalArgumentException("해당 차량의 최근 입차 기록이 없습니다.");
-                });
+            // MissingRecord 테이블에 저장
+            MissingRecord missingRecord = MissingRecord.builder()
+                    .carNumber(carNumber)
+                    .exitWeight(exitWeight)
+                    .exitTime(exitTime)
+                    .checkedAt(LocalDateTime.now())
+                    .outImg1(outImg1)
+                    .outImg2(outImg2)
+                    .outImg3(outImg3)
+                    .build();
 
+            missingRecordRepository.save(missingRecord);
+
+            throw new IllegalArgumentException("해당 차량의 최근 입차 기록이 없습니다. MissingRecord에 저장됨.");
+        }
+
+        // 입차 기록이 있는 경우 정상 출차 처리
+        Transaction transaction = transactionOpt.get();
 
         // 출차 이미지 업로드
         String outImg1 = uploadImage(transactionDTO.getOutImg1(), "outImg1");
@@ -204,34 +214,4 @@ public class TransactionService {
                 .map(TransactionResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
-
-
-//    // 고철 중량, 거래 총액 구하는 기능
-//    public Transaction getScrapTotalWeight(BigDecimal exitWeight, String carNumber, ScrapType scrapType) {
-//
-//        // carNumber(차량 번호)를 기준으로 거래(Transaction)를 조회합니다.
-//        Transaction transaction = transactionRepository.findByCarNumber(carNumber);
-//
-//        // 거래의 입고 중량(entryWeight)을 가져옵니다.
-//        BigDecimal entryWeight = transaction.getEntryWeight();
-//
-//        // 입고 중량에서 출고 중량(exitWeight)을 빼서 스크랩 총 중량(totalWeight)을 계산합니다.
-//        BigDecimal totalWeight = entryWeight.subtract(exitWeight);
-//
-//        // 계산된 총 중량을 거래 객체에 저장합니다.
-//        transaction.setTotalWeight(totalWeight);
-//
-//        // scrapType(스크랩 종류)에 해당하는 가격 정보를 조회합니다.
-//        ScrapPrice scrapTypePrice = scrapPriceRepository.findPriceByScrapType(scrapType);
-//
-//        // 총 중량과 스크랩 가격을 곱하여 구매 금액(purchaseAmount)을 계산합니다.
-//        BigDecimal purchaseAmount = totalWeight.multiply(scrapTypePrice.getPrice());
-//
-//        // 계산된 구매 금액을 거래 객체에 저장합니다.
-//        transaction.setPurchaseAmount(purchaseAmount);
-//
-//        // 업데이트된 거래 정보를 데이터베이스에 저장한 후 반환합니다.
-//        return transactionRepository.save(transaction);
-//    }
-
 }

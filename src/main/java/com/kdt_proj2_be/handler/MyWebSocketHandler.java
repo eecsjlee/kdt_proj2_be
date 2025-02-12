@@ -2,7 +2,7 @@ package com.kdt_proj2_be.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule; // LocalDateTi8me 지원 모듈
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule; // LocalDateTime 지원 모듈
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.EntryExitStatusDTO;
 import com.kdt_proj2_be.persistence.TransactionRepository;
@@ -19,7 +19,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     private static final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private final ObjectMapper objectMapper; // JSON 변환기
-    private final TransactionRepository transactionRepository; // ✅ TransactionRepository 주입
+    private final TransactionRepository transactionRepository; // TransactionRepository 주입
 
     // 생성자에서 TransactionRepository 주입받기
     public MyWebSocketHandler(TransactionRepository transactionRepository) {
@@ -37,7 +37,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 //        session.sendMessage(new TextMessage("서버에 연결되었습니다."));
     }
 
-    // WebSocket을 통해 List<Transaction> JSON으로 전송
+    // 모든 연결된 클라이언트 JSON으로 전송
     public void sendTransactions() throws Exception {
         List<Transaction> transactionList = transactionRepository.findAll(); // DB에서 모든 트랜잭션 가져오기
         String transactionsPayload = objectMapper.writeValueAsString(transactionList); // JSON 변환
@@ -48,6 +48,16 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             }
         }
     }
+
+    // 요청을 보낸 클라이언트 한 곳에 JSON으로 전송
+    private void sendTransactionList(WebSocketSession session) throws Exception {
+        List<Transaction> transactionList = transactionRepository.findAll();
+        String transactionsPayload = objectMapper.writeValueAsString(transactionList);
+
+        session.sendMessage(new TextMessage(transactionsPayload));
+    }
+
+
 
     // 출입 현황 데이터를 전송하는 메서드
     public void sendEntryExitStatus(WebSocketSession session) throws Exception {
@@ -87,15 +97,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    // 클라이언트에게 트랜잭션 리스트 전송
-    private void sendTransactionList(WebSocketSession session) throws Exception {
-        List<Transaction> transactionList = transactionRepository.findAll();
-        String transactionsPayload = objectMapper.writeValueAsString(transactionList);
-
-        session.sendMessage(new TextMessage(transactionsPayload));
-    }
-
-
     // 클라이언트와 연결 종료
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
@@ -115,5 +116,4 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             this.action = action;
         }
     }
-
 }

@@ -82,7 +82,7 @@ public class TransactionController {
         MultipartFile outImg2file = null;
         MultipartFile outImg3file = null;
 
-        // 🔄 Python 서버에서 차량 번호와 이미지 응답 받기
+        // Python 서버에서 차량 번호와 이미지 응답 받기
         if (outImg1file != null && !outImg1file.isEmpty()) {
             TransactionDTO pythonResponse = pythonImageService.sendImageToPythonServer(outImg1file);
             if (pythonResponse != null) {
