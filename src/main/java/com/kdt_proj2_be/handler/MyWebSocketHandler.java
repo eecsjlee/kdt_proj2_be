@@ -57,21 +57,24 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(transactionsPayload));
     }
 
-
-
     // 출입 현황 데이터를 전송하는 메서드
     public void sendEntryExitStatus(WebSocketSession session) throws Exception {
         List<Transaction> transactions = transactionRepository.findAll();
 
-        // `Transaction` → `EntryExitStatusDTO` 변환
-        List<EntryExitStatusDTO> entryExitStatus = transactions.stream()
-                .map(EntryExitStatusDTO::fromEntity)
-                .collect(Collectors.toList());
+        // 트랜잭션을 10개씩 나누어 전송 (Chunking)
+        final int CHUNK_SIZE = 10;
+        for (int i = 0; i < transactions.size(); i += CHUNK_SIZE) {
+            List<Transaction> chunk = transactions.subList(i, Math.min(i + CHUNK_SIZE, transactions.size()));
 
-        String entryExitStatusPayload = objectMapper.writeValueAsString(entryExitStatus);
-        session.sendMessage(new TextMessage(entryExitStatusPayload));
+            // `Transaction` → `EntryExitStatusDTO` 변환
+            List<EntryExitStatusDTO> entryExitStatus = transactions.stream()
+                    .map(EntryExitStatusDTO::fromEntity)
+                    .collect(Collectors.toList());
+
+            String entryExitStatusPayload = objectMapper.writeValueAsString(entryExitStatus);
+            session.sendMessage(new TextMessage(entryExitStatusPayload));
+        }
     }
-
 
     // 클라이언트의 요청을 처리하는 메서드
     @Override

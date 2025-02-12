@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
 // 오류 코드
 //public class WebSocketConfig implements WebSocketConfigurer {
@@ -57,4 +58,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(myWebSocketHandler(), "/ws") // @Bean으로 등록된 핸들러 사용
                 .setAllowedOrigins("*"); // CORS 설정
     }
+
+    // WebSocket 메시지 크기 제한 증가 5MB
+    @Bean
+    public ServletServerContainerFactoryBean createWebSocketContainer() {
+        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
+        container.setMaxTextMessageBufferSize(5120000);
+        container.setMaxBinaryMessageBufferSize(5120000);
+        return container;
+    }
+
 }
