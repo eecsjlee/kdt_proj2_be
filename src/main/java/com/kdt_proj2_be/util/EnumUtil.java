@@ -1,4 +1,4 @@
-package com.kdt_proj2_be.dto;
+package com.kdt_proj2_be.util;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
@@ -6,7 +6,8 @@ import com.kdt_proj2_be.domain.ScrapMetalType;
 
 import java.io.IOException;
 
-public class ScrapMetalTypeDeserializer extends KeyDeserializer {
+public class EnumUtil extends KeyDeserializer {
+
     @Override
     public ScrapMetalType deserializeKey(String key, DeserializationContext ctxt) throws IOException {
         try {
