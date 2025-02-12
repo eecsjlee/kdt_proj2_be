@@ -12,10 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
-@Builder
+@Getter @Setter @ToString @Builder
 public class TransactionDTO {
 
     private MultipartFile inImg1; // Image file
