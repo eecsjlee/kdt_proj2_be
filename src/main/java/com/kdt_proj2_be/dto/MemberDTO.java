@@ -25,10 +25,4 @@ public class MemberDTO {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
-
-
-    MemberDTO(String a, String b) {
-        this.userId = a;
-        this.name = b;
-    }
 }
