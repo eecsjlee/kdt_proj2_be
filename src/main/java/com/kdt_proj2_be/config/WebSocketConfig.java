@@ -1,6 +1,7 @@
 package com.kdt_proj2_be.config;
 
 import com.kdt_proj2_be.handler.MyWebSocketHandler;
+import com.kdt_proj2_be.persistence.MissingRecordRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
 import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
@@ -37,21 +38,18 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final TransactionRepository transactionRepository;
+    private final MissingRecordRepository missingRecordRepository;
 
-    public WebSocketConfig(TransactionRepository transactionRepository) {
+    // WebSocketConfig 생성자에서 두 개의 repository 주입받기
+    public WebSocketConfig(TransactionRepository transactionRepository, MissingRecordRepository missingRecordRepository) {
         this.transactionRepository = transactionRepository;
+        this.missingRecordRepository = missingRecordRepository;
     }
 
     @Bean // Bean으로 등록하여 Spring에서 관리하도록 함
     public MyWebSocketHandler myWebSocketHandler() {
-        return new MyWebSocketHandler(transactionRepository); // TransactionRepository 주입
+        return new MyWebSocketHandler(transactionRepository, missingRecordRepository); // 두 repository를 주입
     }
-
-//    @Bean
-//    public ServletWebServerFactory webServerFactory() {
-//        JettyServletWebServerFactory factory = new JettyServletWebServerFactory(8081);
-//        return factory;
-//    }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {

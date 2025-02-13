@@ -7,12 +7,14 @@ import com.kdt_proj2_be.domain.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface ScrapPriceRepository extends JpaRepository<ScrapPrice, Integer> {
 
     // 특정 ScrapMetalType과 effectiveDate가 같은 ScrapPrice 가져오기 (업데이트 확인용)

@@ -2,9 +2,10 @@ package com.kdt_proj2_be.controller;
 
 import com.kdt_proj2_be.domain.ScrapMetalType;
 import com.kdt_proj2_be.domain.Transaction;
+import com.kdt_proj2_be.dto.EntryExitStatusDTO;
 import com.kdt_proj2_be.dto.TransactionDTO;
 import com.kdt_proj2_be.dto.TransactionResponseDTO;
-import com.kdt_proj2_be.service.PythonImageService;
+import com.kdt_proj2_be.service.ImageService;
 import com.kdt_proj2_be.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionService transactionService;
-    private final PythonImageService pythonImageService;
+    private final ImageService ImageService;
 
     // 입차시 등록
     @Operation(summary = "입차 등록", description = "입차 시 entryWeight와 scrapType을 포함하여 등록합니다.")
@@ -34,8 +35,8 @@ public class TransactionController {
     public ResponseEntity<Transaction> registerTransaction(
             @RequestParam(name = "inImg1", required = false) MultipartFile inImg1file,
             @RequestParam("entryTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime entryTime,
-            @RequestParam("entryWeight") BigDecimal entryWeight, // ✅ entryWeight 추가
-            @RequestParam("scrapType") ScrapMetalType scrapType) throws IOException { // ✅ scrapType 추가
+            @RequestParam("entryWeight") BigDecimal entryWeight, // entryWeight 추가
+            @RequestParam("scrapType") ScrapMetalType scrapType) throws IOException { // scrapType 추가
 
         String carNumber = null;
         MultipartFile inImg2file = null;
@@ -43,7 +44,7 @@ public class TransactionController {
 
         // 클라이언트에서 받은 inImg1 파일이 있을 경우 Python 서버로 전송하고 응답받은 값을 사용
         if (inImg1file != null && !inImg1file.isEmpty()) {
-            TransactionDTO pythonResponse = pythonImageService.sendImageToPythonServer(inImg1file);
+            TransactionDTO pythonResponse = ImageService.sendImageToPythonServer(inImg1file);
             if (pythonResponse != null) {
                 carNumber = pythonResponse.getCarNumber();
                 inImg2file = pythonResponse.getInImg2();
@@ -84,7 +85,7 @@ public class TransactionController {
 
         // Python 서버에서 차량 번호와 이미지 응답 받기
         if (outImg1file != null && !outImg1file.isEmpty()) {
-            TransactionDTO pythonResponse = pythonImageService.sendImageToPythonServer(outImg1file);
+            TransactionDTO pythonResponse = ImageService.sendImageToPythonServer(outImg1file);
             if (pythonResponse != null) {
                 carNumber = pythonResponse.getCarNumber();
                 outImg2file = pythonResponse.getInImg2();
@@ -114,6 +115,12 @@ public class TransactionController {
     @GetMapping
     public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions() {
         return ResponseEntity.ok(transactionService.getAllTransactions());
+    }
+
+
+    @GetMapping("/entryexitstatus")
+    public ResponseEntity<List<EntryExitStatusDTO>> getEntryExitStatus() {
+        return ResponseEntity.ok(transactionService.getEntryExitStatus());
     }
 }
 

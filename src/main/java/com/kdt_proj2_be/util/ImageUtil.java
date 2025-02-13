@@ -13,7 +13,7 @@ public class ImageUtil {
             return null; // 이미지가 없으면 null 반환
         }
 
-        File file = new File("src/main/resources/static/images/" + imagePath);
+        File file = new File("C:/DevWorkspaces/kdt_proj2_be_images/" + imagePath);
         if (!file.exists()) {
             return null; // 파일이 존재하지 않으면 null 반환
         }

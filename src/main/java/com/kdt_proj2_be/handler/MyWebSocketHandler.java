@@ -3,9 +3,14 @@ package com.kdt_proj2_be.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule; // LocalDateTime 지원 모듈
+import com.kdt_proj2_be.domain.MissingRecord;
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.EntryExitStatusDTO;
+import com.kdt_proj2_be.dto.MissingRecordDTO;
+import com.kdt_proj2_be.persistence.MissingRecordRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -20,14 +25,15 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     private static final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private final ObjectMapper objectMapper; // JSON 변환기
     private final TransactionRepository transactionRepository; // TransactionRepository 주입
+    private final MissingRecordRepository missingRecordRepository;
 
-    // 생성자에서 TransactionRepository 주입받기
-    public MyWebSocketHandler(TransactionRepository transactionRepository) {
+    // 생성자에서 Repository 주입받기
+    public MyWebSocketHandler(TransactionRepository transactionRepository, MissingRecordRepository missingRecordRepository) {
         this.transactionRepository = transactionRepository;
+        this.missingRecordRepository = missingRecordRepository;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
-        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ✅ JSON을 문자열 포맷으로 직렬화
-
+        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // JSON을 문자열 포맷으로 직렬화
     }
 
     @Override
@@ -44,7 +50,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
-                session.sendMessage(new TextMessage(transactionsPayload)); // JSON List 전송
+                session.sendMessage(new TextMessage(transactionsPayload)); // JSON 전송
             }
         }
     }
@@ -57,24 +63,74 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(transactionsPayload));
     }
 
-    // 출입 현황 데이터를 전송하는 메서드
+//    // 출입 현황 데이터를 전송하는 메서드
+//    public void sendEntryExitStatus(WebSocketSession session) throws Exception {
+//        List<Transaction> transactions = transactionRepository.findAll();
+//
+//        // 트랜잭션을 10개씩 나누어 전송 (Chunking)
+//        final int CHUNK_SIZE = 10;
+//        for (int i = 0; i < transactions.size(); i += CHUNK_SIZE) {
+//            List<Transaction> chunk = transactions.subList(i, Math.min(i + CHUNK_SIZE, transactions.size()));
+//
+//            // DTO 변환 및 업데이트 시간 기준으로 내림차순 정렬
+//            List<EntryExitStatusDTO> entryExitStatus = transactions.stream()
+//                    .map(EntryExitStatusDTO::fromEntity)
+//                    .sorted((t1, t2) -> t2.getUpdatedAt().compareTo(t1.getUpdatedAt()))  // updatedAt 기준 내림차순 정렬
+//                    .collect(Collectors.toList());
+//
+//            String entryExitStatusPayload = objectMapper.writeValueAsString(entryExitStatus);
+//            session.sendMessage(new TextMessage(entryExitStatusPayload));
+//        }
+//    }
+
     public void sendEntryExitStatus(WebSocketSession session) throws Exception {
-        List<Transaction> transactions = transactionRepository.findAll();
+        // 트랜잭션 데이터를 최신 순으로 정렬 (updatedAt 기준)
+        List<Transaction> transactions = transactionRepository.findAll().stream()
+//                .sorted((t1, t2) -> t2.getUpdatedAt().compareTo(t1.getUpdatedAt()))  // updatedAt 기준 내림차순 정렬
+                .collect(Collectors.toList());
 
-        // 트랜잭션을 10개씩 나누어 전송 (Chunking)
-        final int CHUNK_SIZE = 10;
-        for (int i = 0; i < transactions.size(); i += CHUNK_SIZE) {
-            List<Transaction> chunk = transactions.subList(i, Math.min(i + CHUNK_SIZE, transactions.size()));
+        // DTO 변환
+        List<EntryExitStatusDTO> entryExitStatus = transactions.stream()
+                .map(transaction -> {
+                    EntryExitStatusDTO dto = EntryExitStatusDTO.fromEntity(transaction);
+                    // 추가 필드 계산
+                    dto.setEntryWeight(transaction.getEntryWeight());
+                    dto.setExitWeight(transaction.getExitWeight());
+                    dto.setTotalWeight(transaction.getTotalWeight());
+                    dto.setUpdatedAt(transaction.getUpdatedAt());
+                    return dto;
+                })
+                .collect(Collectors.toList());
 
-            // `Transaction` → `EntryExitStatusDTO` 변환
-            List<EntryExitStatusDTO> entryExitStatus = transactions.stream()
-                    .map(EntryExitStatusDTO::fromEntity)
-                    .collect(Collectors.toList());
-
-            String entryExitStatusPayload = objectMapper.writeValueAsString(entryExitStatus);
-            session.sendMessage(new TextMessage(entryExitStatusPayload));
-        }
+        // JSON으로 변환하여 클라이언트에 전송
+        String entryExitStatusPayload = objectMapper.writeValueAsString(entryExitStatus);
+        session.sendMessage(new TextMessage(entryExitStatusPayload));
     }
+
+    public void sendMissingRecords(WebSocketSession session) throws Exception {
+        // MissingRecord 테이블에서 데이터를 조회하고, checkedAt 기준 내림차순으로 정렬
+        List<MissingRecord> missingRecords = missingRecordRepository.findAll().stream()
+                .sorted((r1, r2) -> r2.getCheckedAt().compareTo(r1.getCheckedAt()))  // checkedAt 기준 내림차순 정렬
+                .collect(Collectors.toList());
+
+        // DTO로 변환
+        List<MissingRecordDTO> missingRecordDTOList = missingRecords.stream()
+                .map(missingRecord -> new MissingRecordDTO(
+                        missingRecord.getCarNumber(),
+                        missingRecord.getCheckedAt(),
+                        missingRecord.getExitTime(),
+                        missingRecord.getExitWeight(),
+                        missingRecord.getOutImg1(),
+                        missingRecord.getOutImg2(),
+                        missingRecord.getOutImg3()
+                ))
+                .collect(Collectors.toList());
+
+        // JSON으로 변환하여 클라이언트에 전송
+        String missingRecordsPayload = objectMapper.writeValueAsString(missingRecordDTOList);
+        session.sendMessage(new TextMessage(missingRecordsPayload));
+    }
+
 
     // 클라이언트의 요청을 처리하는 메서드
     @Override
@@ -92,6 +148,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             else if ("getEntryExitStatus".equals(request.getAction())) {
                 sendEntryExitStatus(session); // 출입 현황 프론트에 전송
             }
+            else if ("getMissingRecords".equals(request.getAction())) {
+                sendMissingRecords(session); // 출입시 예외 테이블 프론트에 전송
+            }
             else {
                 session.sendMessage(new TextMessage("알 수 없는 요청: " + request.getAction()));
             }
@@ -108,15 +167,16 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
     // 클라이언트 요청을 받을 DTO 클래스
+    @Setter @Getter
     private static class WebSocketRequest {
         private String action;
 
-        public String getAction() {
-            return action;
-        }
-
-        public void setAction(String action) {
-            this.action = action;
-        }
+//        public String getAction() {
+//            return action;
+//        }
+//
+//        public void setAction(String action) {
+//            this.action = action;
+//        }
     }
 }

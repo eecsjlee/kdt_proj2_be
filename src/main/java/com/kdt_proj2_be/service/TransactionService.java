@@ -4,6 +4,7 @@ import com.kdt_proj2_be.domain.MissingRecord;
 import com.kdt_proj2_be.domain.ScrapPrice;
 import com.kdt_proj2_be.domain.ScrapType;
 import com.kdt_proj2_be.domain.Transaction;
+import com.kdt_proj2_be.dto.EntryExitStatusDTO;
 import com.kdt_proj2_be.dto.TransactionDTO;
 import com.kdt_proj2_be.dto.TransactionResponseDTO;
 import com.kdt_proj2_be.handler.MyWebSocketHandler;
@@ -11,18 +12,13 @@ import com.kdt_proj2_be.persistence.MissingRecordRepository;
 import com.kdt_proj2_be.persistence.ScrapPriceRepository;
 import com.kdt_proj2_be.persistence.ScrapTypeRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -38,34 +34,7 @@ public class TransactionService {
     private final ScrapTypeRepository scrapTypeRepository;
     private final MissingRecordRepository missingRecordRepository;
     private final MyWebSocketHandler webSocketHandler;
-
-    // 이미지 업로드 메서드
-    private String uploadImage(MultipartFile file, String prefix) throws IOException {
-        if (file == null || file.isEmpty()) {
-            return null;
-        }
-
-        String absolutePath = new File("").getAbsolutePath() + File.separator;
-        String path = "src/main/resources/static/images";
-        File imgDir = new File(path);
-        if (!imgDir.exists()) {
-            imgDir.mkdirs();
-        }
-
-        String contentType = file.getContentType();
-        String originalFileName = file.getOriginalFilename();
-        int lastIndex = originalFileName.lastIndexOf('.') + 1;
-        String fileName = originalFileName.substring(0, lastIndex - 1);
-        String ext = originalFileName.substring(lastIndex);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String newFileName = prefix + "_" + sdf.format(new Date()) + "." + ext;
-
-        // 파일 저장
-        file.transferTo(new File(absolutePath + path + File.separator + newFileName));
-        return newFileName;
-    }
-
+    private final ImageService imageService; // ImageService 주입
 
     public Transaction registerTransaction(TransactionDTO transactionDTO) throws IOException {
 
@@ -83,20 +52,13 @@ public class TransactionService {
                 .build();
 
         // 이미지 업로드
-        String inImg1 = uploadImage(transactionDTO.getInImg1(), "inImg1");
-        String inImg2 = uploadImage(transactionDTO.getInImg2(), "inImg2");
-        String inImg3 = uploadImage(transactionDTO.getInImg3(), "inImg3");
+        String inImg1 = imageService.uploadImage(transactionDTO.getInImg1(), "inImg1");
+        String inImg2 = imageService.uploadImage(transactionDTO.getInImg2(), "inImg2");
+        String inImg3 = imageService.uploadImage(transactionDTO.getInImg3(), "inImg3");
 
         transaction.setInImg1(inImg1);
         transaction.setInImg2(inImg2);
         transaction.setInImg3(inImg3);
-
-        // WebSocket을 통해 전체 트랜잭션 리스트 전송 (모든 클라이언트 업데이트)
-        try {
-            webSocketHandler.sendTransactions();
-        } catch (Exception e) {
-            log.error("WebSocket 전송 중 오류 발생", e);
-        }
 
         return transactionRepository.save(transaction);
     }
@@ -125,12 +87,12 @@ public class TransactionService {
 
         // 입차 기록이 없는 경우 `MissingRecord`에 저장
         if (transactionOpt.isEmpty()) {
-            log.warn("🚨 입차 기록이 없는 차량 발견: {}", carNumber);
+            log.warn("입차 기록이 없는 차량 발견: {}", carNumber);
 
             // 출차 이미지 업로드 (Base64 대신 URL 사용)
-            String outImg1 = uploadImage(transactionDTO.getOutImg1(), "outImg1");
-            String outImg2 = uploadImage(transactionDTO.getOutImg2(), "outImg2");
-            String outImg3 = uploadImage(transactionDTO.getOutImg3(), "outImg3");
+            String outImg1 = imageService.uploadImage(transactionDTO.getOutImg1(), "outImg1");
+            String outImg2 = imageService.uploadImage(transactionDTO.getOutImg2(), "outImg2");
+            String outImg3 = imageService.uploadImage(transactionDTO.getOutImg3(), "outImg3");
 
             // MissingRecord 테이블에 저장
             MissingRecord missingRecord = MissingRecord.builder()
@@ -152,13 +114,12 @@ public class TransactionService {
         Transaction transaction = transactionOpt.get();
 
         // 출차 이미지 업로드
-        String outImg1 = uploadImage(transactionDTO.getOutImg1(), "outImg1");
-        String outImg2 = uploadImage(transactionDTO.getOutImg2(), "outImg2");
-        String outImg3 = uploadImage(transactionDTO.getOutImg3(), "outImg3");
+        String outImg1 = imageService.uploadImage(transactionDTO.getOutImg1(), "outImg1");
+        String outImg2 = imageService.uploadImage(transactionDTO.getOutImg2(), "outImg2");
+        String outImg3 = imageService.uploadImage(transactionDTO.getOutImg3(), "outImg3");
 
         // entryWeight와 exitWeight를 활용한 totalWeight 계산
         BigDecimal entryWeight = transaction.getEntryWeight();
-//        BigDecimal exitWeight = transactionDTO.getExitWeight();
 
         // `entryWeight` 또는 `exitWeight`가 `null`이면 예외 발생
         if (entryWeight == null || exitWeight == null) {
@@ -192,13 +153,6 @@ public class TransactionService {
         transaction.setPurchaseAmount(purchaseAmount);
         transaction.setUpdatedAt(LocalDateTime.now());
 
-        // WebSocket을 통해 전체 트랜잭션 리스트 전송 (모든 클라이언트 업데이트)
-        try {
-            webSocketHandler.sendTransactions();
-        } catch (Exception e) {
-            log.error("WebSocket 전송 중 오류 발생", e);
-        }
-
         // 저장 후 반환
         return transactionRepository.save(transaction);
     }
@@ -214,4 +168,13 @@ public class TransactionService {
                 .map(TransactionResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
+
+    public List<EntryExitStatusDTO> getEntryExitStatus() {
+        return transactionRepository.findAllByOrderByUpdatedAtDesc()
+                .stream()
+                .map(EntryExitStatusDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
 }
