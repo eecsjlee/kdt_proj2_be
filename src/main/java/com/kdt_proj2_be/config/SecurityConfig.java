@@ -89,7 +89,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5000")); // 클라이언트 주소 허용 프론트 3000 플라스트 5000
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5000","http://10.125.121.213:3000")); // 클라이언트 주소 허용 프론트 3000 플라스트 5000
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 요청 헤더 허용
         config.addExposedHeader("Authorization"); // 응답 헤더 노출

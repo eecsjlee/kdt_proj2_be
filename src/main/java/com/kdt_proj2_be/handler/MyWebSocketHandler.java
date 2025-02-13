@@ -9,6 +9,8 @@ import com.kdt_proj2_be.dto.EntryExitStatusDTO;
 import com.kdt_proj2_be.dto.MissingRecordDTO;
 import com.kdt_proj2_be.persistence.MissingRecordRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -34,15 +36,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // JSON을 문자열 포맷으로 직렬화
     }
 
-    // 웹소켓에 연결되면 바로 EntryExitStatus를 보내도록 변경(updatedAt내림차순 정렬문제 때문에 이렇게 했는데 잘 작동할지 모르겠다.)
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println("클라이언트 연결됨: " + session.getId());
         sessions.add(session);
 //        session.sendMessage(new TextMessage("서버에 연결되었습니다."));
-
-        // 클라이언트 연결되면 출입 현황 데이터를 전송
-        sendEntryExitStatus(session);
     }
 
     // 모든 연결된 클라이언트 JSON으로 전송
@@ -87,9 +85,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     public void sendEntryExitStatus(WebSocketSession session) throws Exception {
         // 트랜잭션 데이터를 최신 순으로 정렬 (updatedAt 기준)
-        List<Transaction> transactions = transactionRepository.findAllByOrderByUpdatedAtDesc();
+        List<Transaction> transactions = transactionRepository.findAll().stream()
 //                .sorted((t1, t2) -> t2.getUpdatedAt().compareTo(t1.getUpdatedAt()))  // updatedAt 기준 내림차순 정렬
-//                .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         // DTO 변환
         List<EntryExitStatusDTO> entryExitStatus = transactions.stream()
@@ -151,7 +149,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
                 sendEntryExitStatus(session); // 출입 현황 프론트에 전송
             }
             else if ("getMissingRecords".equals(request.getAction())) {
-                sendMissingRecords(session); // 출입 현황 프론트에 전송
+                sendMissingRecords(session); // 출입시 예외 테이블 프론트에 전송
             }
             else {
                 session.sendMessage(new TextMessage("알 수 없는 요청: " + request.getAction()));
@@ -169,15 +167,16 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     }
 
     // 클라이언트 요청을 받을 DTO 클래스
+    @Setter @Getter
     private static class WebSocketRequest {
         private String action;
 
-        public String getAction() {
-            return action;
-        }
-
-        public void setAction(String action) {
-            this.action = action;
-        }
+//        public String getAction() {
+//            return action;
+//        }
+//
+//        public void setAction(String action) {
+//            this.action = action;
+//        }
     }
 }

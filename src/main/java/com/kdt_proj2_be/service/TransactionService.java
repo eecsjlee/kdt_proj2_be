@@ -4,6 +4,7 @@ import com.kdt_proj2_be.domain.MissingRecord;
 import com.kdt_proj2_be.domain.ScrapPrice;
 import com.kdt_proj2_be.domain.ScrapType;
 import com.kdt_proj2_be.domain.Transaction;
+import com.kdt_proj2_be.dto.EntryExitStatusDTO;
 import com.kdt_proj2_be.dto.TransactionDTO;
 import com.kdt_proj2_be.dto.TransactionResponseDTO;
 import com.kdt_proj2_be.handler.MyWebSocketHandler;
@@ -58,13 +59,6 @@ public class TransactionService {
         transaction.setInImg1(inImg1);
         transaction.setInImg2(inImg2);
         transaction.setInImg3(inImg3);
-
-        // WebSocket을 통해 전체 트랜잭션 리스트 전송 (모든 클라이언트 업데이트)
-        try {
-            webSocketHandler.sendTransactions();
-        } catch (Exception e) {
-            log.error("WebSocket 전송 중 오류 발생", e);
-        }
 
         return transactionRepository.save(transaction);
     }
@@ -159,13 +153,6 @@ public class TransactionService {
         transaction.setPurchaseAmount(purchaseAmount);
         transaction.setUpdatedAt(LocalDateTime.now());
 
-        // WebSocket을 통해 전체 트랜잭션 리스트 전송 (모든 클라이언트 업데이트)
-        try {
-            webSocketHandler.sendTransactions();
-        } catch (Exception e) {
-            log.error("WebSocket 전송 중 오류 발생", e);
-        }
-
         // 저장 후 반환
         return transactionRepository.save(transaction);
     }
@@ -181,4 +168,13 @@ public class TransactionService {
                 .map(TransactionResponseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
+
+
+    public List<EntryExitStatusDTO> getEntryExitStatus() {
+        return transactionRepository.findAllByOrderByUpdatedAtDesc()
+                .stream()
+                .map(EntryExitStatusDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
 }

@@ -119,8 +119,8 @@ public class ImageService {
         }
 
         // 파일의 절대 경로 가져오기
-        String absolutePath = new File("").getAbsolutePath() + File.separator;
-        String path = "src/main/resources/static/images";
+//        String absolutePath = new File("").getAbsolutePath() + File.separator;
+        String path = "C:/DevWorkspaces/kdt_proj2_be_images";
         File imgDir = new File(path);
         if (!imgDir.exists()) {
             imgDir.mkdirs();
@@ -135,7 +135,9 @@ public class ImageService {
         String newFileName = sdf.format(new Date()) + "_" + prefix + "." + ext;
 
         // 파일 저장
-        file.transferTo(new File(absolutePath + path + File.separator + newFileName));
+//        file.transferTo(new File(absolutePath + path + File.separator + newFileName));
+        file.transferTo(new File(path + File.separator + newFileName));
+
         return newFileName;
     }
 }

@@ -2,6 +2,7 @@ package com.kdt_proj2_be.controller;
 
 import com.kdt_proj2_be.domain.ScrapMetalType;
 import com.kdt_proj2_be.domain.Transaction;
+import com.kdt_proj2_be.dto.EntryExitStatusDTO;
 import com.kdt_proj2_be.dto.TransactionDTO;
 import com.kdt_proj2_be.dto.TransactionResponseDTO;
 import com.kdt_proj2_be.service.ImageService;
@@ -114,6 +115,12 @@ public class TransactionController {
     @GetMapping
     public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions() {
         return ResponseEntity.ok(transactionService.getAllTransactions());
+    }
+
+
+    @GetMapping("/entryexitstatus")
+    public ResponseEntity<List<EntryExitStatusDTO>> getEntryExitStatus() {
+        return ResponseEntity.ok(transactionService.getEntryExitStatus());
     }
 }
 
