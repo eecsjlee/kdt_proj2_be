@@ -3,8 +3,11 @@ package com.kdt_proj2_be.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule; // LocalDateTime 지원 모듈
+import com.kdt_proj2_be.domain.MissingRecord;
 import com.kdt_proj2_be.domain.Transaction;
 import com.kdt_proj2_be.dto.EntryExitStatusDTO;
+import com.kdt_proj2_be.dto.MissingRecordDTO;
+import com.kdt_proj2_be.persistence.MissingRecordRepository;
 import com.kdt_proj2_be.persistence.TransactionRepository;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -20,14 +23,15 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     private static final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private final ObjectMapper objectMapper; // JSON 변환기
     private final TransactionRepository transactionRepository; // TransactionRepository 주입
+    private final MissingRecordRepository missingRecordRepository;
 
-    // 생성자에서 TransactionRepository 주입받기
-    public MyWebSocketHandler(TransactionRepository transactionRepository) {
+    // 생성자에서 Repository 주입받기
+    public MyWebSocketHandler(TransactionRepository transactionRepository, MissingRecordRepository missingRecordRepository) {
         this.transactionRepository = transactionRepository;
+        this.missingRecordRepository = missingRecordRepository;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
-        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // ✅ JSON을 문자열 포맷으로 직렬화
-
+        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // JSON을 문자열 포맷으로 직렬화
     }
 
     @Override
@@ -101,6 +105,31 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(entryExitStatusPayload));
     }
 
+    public void sendMissingRecords(WebSocketSession session) throws Exception {
+        // MissingRecord 테이블에서 데이터를 조회하고, checkedAt 기준 내림차순으로 정렬
+        List<MissingRecord> missingRecords = missingRecordRepository.findAll().stream()
+                .sorted((r1, r2) -> r2.getCheckedAt().compareTo(r1.getCheckedAt()))  // checkedAt 기준 내림차순 정렬
+                .collect(Collectors.toList());
+
+        // DTO로 변환
+        List<MissingRecordDTO> missingRecordDTOList = missingRecords.stream()
+                .map(missingRecord -> new MissingRecordDTO(
+                        missingRecord.getCarNumber(),
+                        missingRecord.getCheckedAt(),
+                        missingRecord.getExitTime(),
+                        missingRecord.getExitWeight(),
+                        missingRecord.getOutImg1(),
+                        missingRecord.getOutImg2(),
+                        missingRecord.getOutImg3()
+                ))
+                .collect(Collectors.toList());
+
+        // JSON으로 변환하여 클라이언트에 전송
+        String missingRecordsPayload = objectMapper.writeValueAsString(missingRecordDTOList);
+        session.sendMessage(new TextMessage(missingRecordsPayload));
+    }
+
+
     // 클라이언트의 요청을 처리하는 메서드
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -116,6 +145,9 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
             }
             else if ("getEntryExitStatus".equals(request.getAction())) {
                 sendEntryExitStatus(session); // 출입 현황 프론트에 전송
+            }
+            else if ("getMissingRecords".equals(request.getAction())) {
+                sendMissingRecords(session); // 출입 현황 프론트에 전송
             }
             else {
                 session.sendMessage(new TextMessage("알 수 없는 요청: " + request.getAction()));

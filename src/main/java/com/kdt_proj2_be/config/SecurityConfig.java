@@ -1,6 +1,5 @@
 package com.kdt_proj2_be.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -20,14 +19,12 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${cors.allowed-origins}")
-    private List<String> allowedOrigins;
-
     // password BCrypt 암호화
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -52,11 +49,47 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // CORS 설정 적용 (화이트 리스트 형태로 관리하도록 변경)
+
+//    // CORS 허용?
+//    @Bean
+//    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+//        System.out.println("SecurityConfig filterChain"); //확인용
+//        http.csrf(cf->cf.disable());
+//        http.formLogin(frmLogin->frmLogin.disable());
+//        http.httpBasic(basic->basic.disable());
+//        http.cors(cors->cors.configurationSource(corsSource()));
+//        http.authorizeHttpRequests(security->security
+//                //.requestMatchers("/child/**").authenticated()
+//                //.requestMatchers("/admin/**").hasRole("ADMIN")
+//                .anyRequest().permitAll());
+//
+//        http.addFilter(new JWTAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()));
+//        http.addFilterBefore(new JWTAuthorizationFilter(memRepo), AuthorizationFilter.class);
+//        http.oauth2Login(oauth2->oauth2.loginPage("/login").successHandler(successHandler));
+//
+//        http.sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        return http.build();
+//    }
+//
+//     // CORS 수정전
+//    private CorsConfigurationSource corsSource() {
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.addAllowedOriginPattern(CorsConfiguration.ALL);
+//        config.addAllowedMethod(CorsConfiguration.ALL);
+//        config.addAllowedHeader(CorsConfiguration.ALL);
+//        config.addExposedHeader("Authorization");
+//        config.setAllowCredentials(true);   // 쿠키 전송 허용
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//        return source;
+//    }
+
+    // CORS 설정 적용 (프론트엔드에서 접근 가능하도록 수정)
     @Bean
     public CorsConfigurationSource corsSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(allowedOrigins); // 클라이언트 주소 허용 프론트 3000 플라스트 5000
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5000")); // 클라이언트 주소 허용 프론트 3000 플라스트 5000
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // 요청 헤더 허용
         config.addExposedHeader("Authorization"); // 응답 헤더 노출
@@ -66,4 +99,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
+
+
 }
