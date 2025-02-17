@@ -69,19 +69,6 @@ public class TransactionService {
         BigDecimal exitWeight = transactionDTO.getExitWeight();
         LocalDateTime exitTime = transactionDTO.getExitTime();
 
-//        // 출차되지 않은 최신 거래 조회 (최근 entryTime 기준)
-//        Transaction transaction = transactionRepository.findFirstByCarNumberOrderByEntryTimeDesc(carNumber)
-//                .orElseThrow(() -> {
-//                    log.warn("입차 기록이 없는 차량 발견: {}", carNumber);
-//                    missingRecordRepository.save(
-//                            missingRecordRepository.builder()
-//                                    .carNumber(carNumber)
-//                                    .checkedAt(LocalDateTime.now())
-//                                    .build()
-//                    );
-//
-//                });
-
         // 출차되지 않은 차량 조회 (entryTime이 있고 exitTime이 null)
         Optional<Transaction> transactionOpt = transactionRepository.findFirstByCarNumberAndExitTimeIsNullOrderByEntryTimeDesc(carNumber);
 

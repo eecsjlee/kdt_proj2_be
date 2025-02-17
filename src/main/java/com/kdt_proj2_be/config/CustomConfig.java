@@ -24,11 +24,4 @@ public class CustomConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images1/**")
                 .addResourceLocations("file:c:/Temp/upload1/");
     }
-
-//    @Override
-//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        // 차량 번호판
-//        registry.addResourceHandler("/registerCar/**")
-//                .addResourceLocations("classpath:static/images/", "file:c:/DevWorkspaces/kdt_proj2_be/src/main/resources/static/images");
-//    }
 }

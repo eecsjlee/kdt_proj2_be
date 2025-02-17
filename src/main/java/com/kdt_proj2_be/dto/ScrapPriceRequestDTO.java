@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @Getter @Setter
@@ -20,9 +19,4 @@ public class ScrapPriceRequestDTO {
 
     @JsonDeserialize(keyUsing = EnumUtil.class) // ENUM 키 변환 추가
     private Map<ScrapMetalType, BigDecimal> prices; // 여러 고철 가격을 받기 위해 Map 사용
-
-      // 수정 전
-//    private ScrapMetalType scrapType; // ENUM 값으로 요청 받기
-//    private BigDecimal price;
-//    private LocalDateTime effectiveDate;
 }

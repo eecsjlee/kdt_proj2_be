@@ -63,26 +63,6 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(transactionsPayload));
     }
 
-//    // 출입 현황 데이터를 전송하는 메서드
-//    public void sendEntryExitStatus(WebSocketSession session) throws Exception {
-//        List<Transaction> transactions = transactionRepository.findAll();
-//
-//        // 트랜잭션을 10개씩 나누어 전송 (Chunking)
-//        final int CHUNK_SIZE = 10;
-//        for (int i = 0; i < transactions.size(); i += CHUNK_SIZE) {
-//            List<Transaction> chunk = transactions.subList(i, Math.min(i + CHUNK_SIZE, transactions.size()));
-//
-//            // DTO 변환 및 업데이트 시간 기준으로 내림차순 정렬
-//            List<EntryExitStatusDTO> entryExitStatus = transactions.stream()
-//                    .map(EntryExitStatusDTO::fromEntity)
-//                    .sorted((t1, t2) -> t2.getUpdatedAt().compareTo(t1.getUpdatedAt()))  // updatedAt 기준 내림차순 정렬
-//                    .collect(Collectors.toList());
-//
-//            String entryExitStatusPayload = objectMapper.writeValueAsString(entryExitStatus);
-//            session.sendMessage(new TextMessage(entryExitStatusPayload));
-//        }
-//    }
-
     public void sendEntryExitStatus(WebSocketSession session) throws Exception {
         // 트랜잭션 데이터를 최신 순으로 정렬 (updatedAt 기준)
         List<Transaction> transactions = transactionRepository.findAll().stream()
@@ -171,12 +151,5 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     private static class WebSocketRequest {
         private String action;
 
-//        public String getAction() {
-//            return action;
-//        }
-//
-//        public void setAction(String action) {
-//            this.action = action;
-//        }
     }
 }
