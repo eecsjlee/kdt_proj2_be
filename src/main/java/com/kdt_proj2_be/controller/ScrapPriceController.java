@@ -32,7 +32,6 @@ public class ScrapPriceController {
         this.scrapPriceService = scrapPriceService;
     }
 
-
     /**
      * 스크랩 가격 목록을 조회하는 엔드포인트
      *

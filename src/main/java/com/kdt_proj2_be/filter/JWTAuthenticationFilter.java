@@ -27,7 +27,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
 
-
     /**
      * 로그인 요청이 들어오면 사용자 인증을 시도하는 매서드
      * 사용자가 POST /login 요청시 실햄됨

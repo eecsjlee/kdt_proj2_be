@@ -117,7 +117,6 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getAllTransactions());
     }
 
-
     @GetMapping("/entryexitstatus")
     public ResponseEntity<List<EntryExitStatusDTO>> getEntryExitStatus() {
         return ResponseEntity.ok(transactionService.getEntryExitStatus());
