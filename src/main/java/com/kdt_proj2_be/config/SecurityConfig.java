@@ -2,9 +2,13 @@ package com.kdt_proj2_be.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,12 +23,26 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final UserDetailsService userDetailsService;
+
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder); // DI로 주입
+
+        return new ProviderManager(List.of(authProvider));
+    }
+
     // password BCrypt 암호화
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,42 +67,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
-//    // CORS 허용?
-//    @Bean
-//    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-//        System.out.println("SecurityConfig filterChain"); //확인용
-//        http.csrf(cf->cf.disable());
-//        http.formLogin(frmLogin->frmLogin.disable());
-//        http.httpBasic(basic->basic.disable());
-//        http.cors(cors->cors.configurationSource(corsSource()));
-//        http.authorizeHttpRequests(security->security
-//                //.requestMatchers("/child/**").authenticated()
-//                //.requestMatchers("/admin/**").hasRole("ADMIN")
-//                .anyRequest().permitAll());
-//
-//        http.addFilter(new JWTAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()));
-//        http.addFilterBefore(new JWTAuthorizationFilter(memRepo), AuthorizationFilter.class);
-//        http.oauth2Login(oauth2->oauth2.loginPage("/login").successHandler(successHandler));
-//
-//        http.sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        return http.build();
-//    }
-//
-//     // CORS 수정전
-//    private CorsConfigurationSource corsSource() {
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.addAllowedOriginPattern(CorsConfiguration.ALL);
-//        config.addAllowedMethod(CorsConfiguration.ALL);
-//        config.addAllowedHeader(CorsConfiguration.ALL);
-//        config.addExposedHeader("Authorization");
-//        config.setAllowCredentials(true);   // 쿠키 전송 허용
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", config);
-//        return source;
-//    }
-
     // CORS 설정 적용 (프론트엔드에서 접근 가능하도록 수정)
     @Bean
     public CorsConfigurationSource corsSource() {
@@ -99,7 +81,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-
-
 }
