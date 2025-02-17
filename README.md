@@ -5,25 +5,6 @@
 IntelliJ IDEA  
 Spring Boot version '3.4.1'  
   
-## dependencies
-  
-```declarative
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-//	runtimeOnly 'com.mysql:mysql-connector-j'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
-```
-  
-  
 ## 프로젝트 기간
   
 2025-01-13 ~ 2025-02-20  
@@ -40,6 +21,11 @@ Spring Boot version '3.4.1'
 
 ## 트러블 슈팅
   
-### ManyToOne + @OneToMany 양방향 관계 순환 참조 문제
+### @ManyToOne + @OneToMany 양방향 관계 순환 참조 문제
   
 Jackson을 사용하여 JSON 직렬화를 수행할 때, 무한 루프가 발생할 가능성이 있음.  
+  
+### 정적 이미지 변경 후 서버 재시작 필요 문제
+  
+src/main/resources/static/ 폴더에 차량 번호판 이미지를 저장했으나, 프론트엔드에서 즉시 반영되지 않고 서버를 재시작해야만 변경사항이 보이는 문제 발생.
+  
