@@ -4,6 +4,7 @@
   
 IntelliJ IDEA  
 Spring Boot version '3.4.1'  
+MariaDB '10.11.10'
   
 ## 프로젝트 기간
   

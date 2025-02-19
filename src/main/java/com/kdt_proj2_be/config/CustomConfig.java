@@ -15,7 +15,7 @@ public class CustomConfig implements WebMvcConfigurer {
 
         // jar을 생성할 때 이미 저장된 리소스 호출
         // classpath ==> .jar/BOOT-INF/classes/ 를 의미
-        // 		이클립스 Package Explorer에서는 src/main/resources를 의미
+        // 이클립스 Package Explorer에서는 src/main/resources를 의미
         registry.addResourceHandler("/images/**")
 //                .addResourceLocations("classpath:static/images/","file:C:/DevWorkspaces/kdt_proj2_be_images/");
                 .addResourceLocations("file:C:/DevWorkspaces/kdt_proj2_be_images/");
